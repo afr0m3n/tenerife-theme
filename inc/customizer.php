@@ -833,6 +833,20 @@ function amarilla_customize_render_tenerife_tips() {
 }
 
 /**
+ * Selective refresh callback: sekce Kde nás najdete.
+ */
+function amarilla_customize_render_locations() {
+	return amarilla_customize_render_pattern( 'locations-map.php' );
+}
+
+/**
+ * Selective refresh callback: závěrečná CTA sekce.
+ */
+function amarilla_customize_render_cta_section() {
+	return amarilla_customize_render_pattern( 'cta-section.php' );
+}
+
+/**
  * Selective refresh — aktualizace náhledu bez kompletního reloadu
  */
 function amarilla_customize_partials( $wp_customize ) {
@@ -939,6 +953,60 @@ function amarilla_customize_partials( $wp_customize ) {
 			),
 			'render_callback' => 'amarilla_customize_render_tenerife_tips',
 		),
+		'amarilla_locations'     => array(
+			'selector'        => '.amarilla-locations',
+			'primary_setting' => 'amarilla_locations_title',
+			'settings'        => array(
+				'amarilla_locations_enabled',
+				'amarilla_locations_eyebrow',
+				'amarilla_locations_title',
+				'amarilla_locations_lead',
+				'amarilla_loc_1_name',
+				'amarilla_loc_1_address',
+				'amarilla_loc_1_hours',
+				'amarilla_loc_1_lat',
+				'amarilla_loc_1_lng',
+				'amarilla_loc_2_name',
+				'amarilla_loc_2_address',
+				'amarilla_loc_2_hours',
+				'amarilla_loc_2_lat',
+				'amarilla_loc_2_lng',
+				'amarilla_loc_3_name',
+				'amarilla_loc_3_address',
+				'amarilla_loc_3_hours',
+				'amarilla_loc_3_lat',
+				'amarilla_loc_3_lng',
+				'amarilla_loc_4_name',
+				'amarilla_loc_4_address',
+				'amarilla_loc_4_hours',
+				'amarilla_loc_4_lat',
+				'amarilla_loc_4_lng',
+				'amarilla_loc_5_name',
+				'amarilla_loc_5_address',
+				'amarilla_loc_5_hours',
+				'amarilla_loc_5_lat',
+				'amarilla_loc_5_lng',
+				'amarilla_loc_6_name',
+				'amarilla_loc_6_address',
+				'amarilla_loc_6_hours',
+				'amarilla_loc_6_lat',
+				'amarilla_loc_6_lng',
+			),
+			'render_callback' => 'amarilla_customize_render_locations',
+		),
+		'amarilla_cta_section'   => array(
+			'selector'        => '.amarilla-cta',
+			'primary_setting' => 'amarilla_cta_title',
+			'settings'        => array(
+				'amarilla_cta_enabled',
+				'amarilla_cta_title',
+				'amarilla_cta_title_accent',
+				'amarilla_cta_lead',
+				'amarilla_cta_btn_text',
+				'amarilla_cta_btn_url',
+			),
+			'render_callback' => 'amarilla_customize_render_cta_section',
+		),
 	);
 
 	foreach ( $section_partials as $partial_id => $partial ) {
@@ -967,7 +1035,7 @@ function amarilla_customize_partials( $wp_customize ) {
 		$wp_customize->selective_refresh->add_partial( $partial_id, $partial_args );
 	}
 }
-add_action( 'customize_register', 'amarilla_customize_partials', 20 );
+add_action( 'customize_register', 'amarilla_customize_partials', 35 );
 
 /**
  * Skript pro postMessage transport v náhledu
@@ -990,12 +1058,16 @@ function amarilla_customize_preview_shortcut_styles() {
 	$css = '
 		.amarilla-trust > .customize-partial-edit-shortcut,
 		.amarilla-why > .customize-partial-edit-shortcut,
-		.amarilla-tips > .customize-partial-edit-shortcut {
+		.amarilla-tips > .customize-partial-edit-shortcut,
+		.amarilla-locations > .customize-partial-edit-shortcut,
+		.amarilla-cta > .customize-partial-edit-shortcut {
 			z-index: 100000;
 		}
 		.amarilla-trust > .customize-partial-edit-shortcut button,
 		.amarilla-why > .customize-partial-edit-shortcut button,
-		.amarilla-tips > .customize-partial-edit-shortcut button {
+		.amarilla-tips > .customize-partial-edit-shortcut button,
+		.amarilla-locations > .customize-partial-edit-shortcut button,
+		.amarilla-cta > .customize-partial-edit-shortcut button {
 			left: 12px;
 			top: 12px;
 			z-index: 100001;
