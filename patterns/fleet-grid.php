@@ -6,10 +6,12 @@
  * Description: Sekce s nejnovějšími 3 vozy, načítané dynamicky z CPT vehicle.
  */
 
-$eyebrow = __( 'Vozový park', 'amarilla' );
-$title   = __( 'Auto pro každý výlet po ostrově.', 'amarilla' );
-$lead    = __( 'Od úsporných hatchbacků do města po prostorná SUV pro výpravu k Teide. Všechna auta jsou pravidelně servisovaná a klimatizovaná.', 'amarilla' );
-$fleet_url = amarilla_get_fleet_url();
+$eyebrow     = amarilla_get_theme_mod( 'amarilla_fleet_eyebrow' );
+$title       = amarilla_get_theme_mod( 'amarilla_fleet_title' );
+$lead        = amarilla_get_theme_mod( 'amarilla_fleet_lead' );
+$empty_text  = amarilla_get_theme_mod( 'amarilla_fleet_empty_text' );
+$button_text = amarilla_get_theme_mod( 'amarilla_fleet_button_text' );
+$fleet_url   = amarilla_get_fleet_url();
 ?>
 <!-- wp:group {"align":"full","tagName":"section","className":"amarilla-fleet","layout":{"type":"default"}} -->
 <section class="wp-block-group alignfull amarilla-fleet" id="fleet">
@@ -104,7 +106,7 @@ $fleet_url = amarilla_get_fleet_url();
 		else :
 			?>
 			<div class="amarilla-fleet-empty">
-				<p><?php esc_html_e( 'Vozový park bude brzy doplněn. Pro zobrazení sekce přidejte v adminu několik vozidel.', 'amarilla' ); ?></p>
+				<p><?php echo esc_html( $empty_text ); ?></p>
 			</div>
 			<?php
 		endif;
@@ -113,7 +115,7 @@ $fleet_url = amarilla_get_fleet_url();
 
 	<div class="amarilla-fleet-cta">
 		<a href="<?php echo esc_url( $fleet_url ); ?>" class="amarilla-btn amarilla-btn--ghost">
-			<?php esc_html_e( 'Zobrazit celý vozový park', 'amarilla' ); ?>
+			<?php echo esc_html( $button_text ); ?>
 			<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
 		</a>
 	</div>

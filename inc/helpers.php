@@ -57,6 +57,12 @@ function amarilla_get_theme_defaults() {
 
 		'amarilla_trust_enabled' => true,
 
+		'amarilla_fleet_eyebrow'     => 'Vozový park',
+		'amarilla_fleet_title'       => 'Auto pro každý výlet po ostrově.',
+		'amarilla_fleet_lead'        => 'Od úsporných hatchbacků do města po prostorná SUV pro výpravu k Teide. Všechna auta jsou pravidelně servisovaná a klimatizovaná.',
+		'amarilla_fleet_empty_text'  => 'Vozový park bude brzy doplněn. Pro zobrazení sekce přidejte v adminu několik vozidel.',
+		'amarilla_fleet_button_text' => 'Zobrazit celý vozový park',
+
 		'amarilla_why_enabled'      => true,
 		'amarilla_why_eyebrow'      => 'Proč si vybrat nás',
 		'amarilla_why_title'        => 'Místní tým, který ostrov',

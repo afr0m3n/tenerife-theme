@@ -412,7 +412,68 @@ function amarilla_customize_register( $wp_customize ) {
 	}
 
 	/* ============================================================
-	 * 6) PROČ SI VYBRAT NÁS
+	 * 6) VOZOVÝ PARK
+	 * ============================================================ */
+	$wp_customize->add_section( 'amarilla_fleet', array(
+		'title'       => __( 'Vozový park', 'amarilla' ),
+		'description' => __( 'Texty nad dynamickým výpisem vozidel na hlavní stránce. Samotná vozidla se spravují v administraci v části Vozový park.', 'amarilla' ),
+		'panel'       => 'amarilla_panel',
+		'priority'    => 45,
+	) );
+
+	$wp_customize->add_setting( 'amarilla_fleet_eyebrow', array(
+		'default'           => amarilla_get_theme_default( 'amarilla_fleet_eyebrow' ),
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'amarilla_fleet_eyebrow', array(
+		'label'   => __( 'Popisek nad nadpisem', 'amarilla' ),
+		'section' => 'amarilla_fleet',
+		'type'    => 'text',
+	) );
+
+	$wp_customize->add_setting( 'amarilla_fleet_title', array(
+		'default'           => amarilla_get_theme_default( 'amarilla_fleet_title' ),
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'amarilla_fleet_title', array(
+		'label'   => __( 'Nadpis sekce', 'amarilla' ),
+		'section' => 'amarilla_fleet',
+		'type'    => 'text',
+	) );
+
+	$wp_customize->add_setting( 'amarilla_fleet_lead', array(
+		'default'           => amarilla_get_theme_default( 'amarilla_fleet_lead' ),
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+	$wp_customize->add_control( 'amarilla_fleet_lead', array(
+		'label'   => __( 'Popis sekce', 'amarilla' ),
+		'section' => 'amarilla_fleet',
+		'type'    => 'textarea',
+	) );
+
+	$wp_customize->add_setting( 'amarilla_fleet_empty_text', array(
+		'default'           => amarilla_get_theme_default( 'amarilla_fleet_empty_text' ),
+		'sanitize_callback' => 'sanitize_textarea_field',
+	) );
+	$wp_customize->add_control( 'amarilla_fleet_empty_text', array(
+		'label'       => __( 'Text, když nejsou přidaná vozidla', 'amarilla' ),
+		'description' => __( 'Zobrazí se jen tehdy, když v administraci není žádné vozidlo.', 'amarilla' ),
+		'section'     => 'amarilla_fleet',
+		'type'        => 'textarea',
+	) );
+
+	$wp_customize->add_setting( 'amarilla_fleet_button_text', array(
+		'default'           => amarilla_get_theme_default( 'amarilla_fleet_button_text' ),
+		'sanitize_callback' => 'sanitize_text_field',
+	) );
+	$wp_customize->add_control( 'amarilla_fleet_button_text', array(
+		'label'   => __( 'Text tlačítka na celý vozový park', 'amarilla' ),
+		'section' => 'amarilla_fleet',
+		'type'    => 'text',
+	) );
+
+	/* ============================================================
+	 * 7) PROČ SI VYBRAT NÁS
 	 * ============================================================ */
 	$wp_customize->add_section( 'amarilla_why', array(
 		'title'    => __( 'Sekce "Proč si vybrat nás"', 'amarilla' ),
@@ -509,7 +570,7 @@ function amarilla_customize_register( $wp_customize ) {
 	}
 
 	/* ============================================================
-	 * 7) TIPY Z TENERIFE
+	 * 8) TIPY Z TENERIFE
 	 * ============================================================ */
 	$wp_customize->add_section( 'amarilla_tips', array(
 		'title'    => __( 'Sekce "Tipy z Tenerife"', 'amarilla' ),
@@ -605,7 +666,7 @@ function amarilla_customize_register( $wp_customize ) {
 	}
 
 	/* ============================================================
-	 * 8) ZÁVĚREČNÉ CTA
+	 * 9) ZÁVĚREČNÉ CTA
 	 * ============================================================ */
 	$wp_customize->add_section( 'amarilla_cta', array(
 		'title'    => __( 'Závěrečné CTA', 'amarilla' ),
@@ -819,6 +880,13 @@ function amarilla_customize_render_trust_strip() {
 }
 
 /**
+ * Selective refresh callback: sekce Vozový park.
+ */
+function amarilla_customize_render_fleet() {
+	return amarilla_customize_render_pattern( 'fleet-grid.php' );
+}
+
+/**
  * Selective refresh callback: sekce Proč si vybrat nás.
  */
 function amarilla_customize_render_why_us() {
@@ -905,6 +973,18 @@ function amarilla_customize_partials( $wp_customize ) {
 				'amarilla_trust_4_subtitle',
 			),
 			'render_callback' => 'amarilla_customize_render_trust_strip',
+		),
+		'amarilla_fleet'         => array(
+			'selector'        => '.amarilla-fleet',
+			'primary_setting' => 'amarilla_fleet_title',
+			'settings'        => array(
+				'amarilla_fleet_eyebrow',
+				'amarilla_fleet_title',
+				'amarilla_fleet_lead',
+				'amarilla_fleet_empty_text',
+				'amarilla_fleet_button_text',
+			),
+			'render_callback' => 'amarilla_customize_render_fleet',
 		),
 		'amarilla_why_us'        => array(
 			'selector'        => '.amarilla-why',
@@ -1057,6 +1137,7 @@ add_action( 'customize_preview_init', 'amarilla_customize_preview_js' );
 function amarilla_customize_preview_shortcut_styles() {
 	$css = '
 		.amarilla-trust > .customize-partial-edit-shortcut,
+		.amarilla-fleet > .customize-partial-edit-shortcut,
 		.amarilla-why > .customize-partial-edit-shortcut,
 		.amarilla-tips > .customize-partial-edit-shortcut,
 		.amarilla-locations > .customize-partial-edit-shortcut,
@@ -1064,6 +1145,7 @@ function amarilla_customize_preview_shortcut_styles() {
 			z-index: 100000;
 		}
 		.amarilla-trust > .customize-partial-edit-shortcut button,
+		.amarilla-fleet > .customize-partial-edit-shortcut button,
 		.amarilla-why > .customize-partial-edit-shortcut button,
 		.amarilla-tips > .customize-partial-edit-shortcut button,
 		.amarilla-locations > .customize-partial-edit-shortcut button,
