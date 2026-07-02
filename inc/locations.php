@@ -35,16 +35,16 @@ function amarilla_locations_max() {
 function amarilla_get_locations() {
 	$locations = array();
 	for ( $i = 1; $i <= amarilla_locations_max(); $i++ ) {
-		$name = trim( (string) get_theme_mod( "amarilla_loc_{$i}_name", '' ) );
+		$name = trim( (string) amarilla_get_theme_mod( "amarilla_loc_{$i}_name" ) );
 		if ( ! $name ) {
 			continue;
 		}
-		$lat = (string) get_theme_mod( "amarilla_loc_{$i}_lat", '' );
-		$lng = (string) get_theme_mod( "amarilla_loc_{$i}_lng", '' );
+		$lat = (string) amarilla_get_theme_mod( "amarilla_loc_{$i}_lat" );
+		$lng = (string) amarilla_get_theme_mod( "amarilla_loc_{$i}_lng" );
 		$locations[] = array(
 			'name'    => $name,
-			'address' => (string) get_theme_mod( "amarilla_loc_{$i}_address", '' ),
-			'hours'   => (string) get_theme_mod( "amarilla_loc_{$i}_hours", '' ),
+			'address' => (string) amarilla_get_theme_mod( "amarilla_loc_{$i}_address" ),
+			'hours'   => (string) amarilla_get_theme_mod( "amarilla_loc_{$i}_hours" ),
 			'lat'     => $lat,
 			'lng'     => $lng,
 			'osm_url' => amarilla_build_osm_url( $lat, $lng, $name ),
@@ -123,7 +123,7 @@ function amarilla_customize_locations( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_locations_enabled', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_locations_enabled' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_locations_enabled', array(
@@ -133,7 +133,7 @@ function amarilla_customize_locations( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_locations_eyebrow', array(
-		'default'           => 'Kde nás najdete',
+		'default'           => amarilla_get_theme_default( 'amarilla_locations_eyebrow' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_locations_eyebrow', array(
@@ -143,7 +143,7 @@ function amarilla_customize_locations( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_locations_title', array(
-		'default'           => 'Pobočky po celém ostrově.',
+		'default'           => amarilla_get_theme_default( 'amarilla_locations_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_locations_title', array(
@@ -153,7 +153,7 @@ function amarilla_customize_locations( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_locations_lead', array(
-		'default'           => 'Vozy si můžete vyzvednout přímo na letišti nebo si je přivezeme zdarma na váš hotel.',
+		'default'           => amarilla_get_theme_default( 'amarilla_locations_lead' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_locations_lead', array(
@@ -162,21 +162,9 @@ function amarilla_customize_locations( $wp_customize ) {
 		'type'    => 'textarea',
 	) );
 
-	// Výchozí hodnoty — TFS, TFN, Los Cristianos
-	$defaults = array(
-		1 => array( 'Letiště Tenerife Sur (TFS)',  "Avenida Bruselas\n38660 Adeje",       '7:00 – 23:00', '28.0444', '-16.5727' ),
-		2 => array( 'Letiště Tenerife Norte (TFN)', "Avenida Ángel Sanz Briz\n38297 La Laguna", '7:00 – 22:00', '28.4843', '-16.3415' ),
-		3 => array( 'Los Cristianos — pobočka',    "Calle General Franco 25\n38650 Arona", '9:00 – 19:00', '28.0476', '-16.7164' ),
-		4 => array( '', '', '', '', '' ),
-		5 => array( '', '', '', '', '' ),
-		6 => array( '', '', '', '', '' ),
-	);
-
 	for ( $i = 1; $i <= amarilla_locations_max(); $i++ ) {
-		$d = isset( $defaults[ $i ] ) ? $defaults[ $i ] : array( '', '', '', '', '' );
-
 		$wp_customize->add_setting( "amarilla_loc_{$i}_name", array(
-			'default'           => $d[0],
+			'default'           => amarilla_get_theme_default( "amarilla_loc_{$i}_name" ),
 			'sanitize_callback' => 'sanitize_text_field',
 		) );
 		$wp_customize->add_control( "amarilla_loc_{$i}_name", array(
@@ -186,7 +174,7 @@ function amarilla_customize_locations( $wp_customize ) {
 		) );
 
 		$wp_customize->add_setting( "amarilla_loc_{$i}_address", array(
-			'default'           => $d[1],
+			'default'           => amarilla_get_theme_default( "amarilla_loc_{$i}_address" ),
 			'sanitize_callback' => 'sanitize_textarea_field',
 		) );
 		$wp_customize->add_control( "amarilla_loc_{$i}_address", array(
@@ -197,7 +185,7 @@ function amarilla_customize_locations( $wp_customize ) {
 		) );
 
 		$wp_customize->add_setting( "amarilla_loc_{$i}_hours", array(
-			'default'           => $d[2],
+			'default'           => amarilla_get_theme_default( "amarilla_loc_{$i}_hours" ),
 			'sanitize_callback' => 'sanitize_text_field',
 		) );
 		$wp_customize->add_control( "amarilla_loc_{$i}_hours", array(
@@ -207,7 +195,7 @@ function amarilla_customize_locations( $wp_customize ) {
 		) );
 
 		$wp_customize->add_setting( "amarilla_loc_{$i}_lat", array(
-			'default'           => $d[3],
+			'default'           => amarilla_get_theme_default( "amarilla_loc_{$i}_lat" ),
 			'sanitize_callback' => 'sanitize_text_field',
 		) );
 		$wp_customize->add_control( "amarilla_loc_{$i}_lat", array(
@@ -217,7 +205,7 @@ function amarilla_customize_locations( $wp_customize ) {
 		) );
 
 		$wp_customize->add_setting( "amarilla_loc_{$i}_lng", array(
-			'default'           => $d[4],
+			'default'           => amarilla_get_theme_default( "amarilla_loc_{$i}_lng" ),
 			'sanitize_callback' => 'sanitize_text_field',
 		) );
 		$wp_customize->add_control( "amarilla_loc_{$i}_lng", array(

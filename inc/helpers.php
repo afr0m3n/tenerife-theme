@@ -11,6 +11,162 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Sdílené výchozí hodnoty pro Customizer i frontend render.
+ *
+ * Klíče odpovídají existujícím theme_mod ID, aby se produkční nastavení
+ * nemuselo migrovat ani přejmenovávat.
+ */
+function amarilla_get_theme_defaults() {
+	static $defaults = null;
+
+	if ( null !== $defaults ) {
+		return $defaults;
+	}
+
+	$defaults = array(
+		'amarilla_logo_width'              => 160,
+		'amarilla_logo_light'              => '',
+		'amarilla_show_text_logo_fallback' => true,
+
+		'amarilla_topbar_enabled'     => true,
+		'amarilla_topbar_phone'       => '+420 702 143 084',
+		'amarilla_topbar_phone_link'  => '+420702143084',
+		'amarilla_topbar_location'    => 'Letiště Tenerife Sur (TFS)',
+		'amarilla_topbar_show_langs'  => true,
+
+		'amarilla_phone'        => '+34 922 000 000',
+		'amarilla_email'        => 'info@autopujcovna-tenerife.cz',
+		'amarilla_address'      => 'Letiště Tenerife Sur, Avenida Bruselas, 38660',
+		'amarilla_address_full' => "Letiště Tenerife Sur (TFS)\nAvenida Bruselas, 38660\nAdeje, Santa Cruz de Tenerife",
+		'amarilla_hours'        => 'Po–Ne, 7:00–23:00',
+		'amarilla_whatsapp'     => '',
+
+		'amarilla_hero_eyebrow'      => 'Autopůjčovna na Tenerife',
+		'amarilla_hero_title'        => 'Tenerife po vašem',
+		'amarilla_hero_title_accent' => 'rytmu.',
+		'amarilla_hero_lead'         => 'Půjčte si auto bez starostí. Vyzvednutí přímo na letišti, plné pojištění a žádné skryté poplatky. Místní tým, který ostrov zná.',
+		'amarilla_hero_btn1_text'    => 'Prohlédnout vozy',
+		'amarilla_hero_btn1_url'     => '/vozovy-park/',
+		'amarilla_hero_btn2_text'    => 'Jak to funguje',
+		'amarilla_hero_btn2_url'     => '/kontakt/',
+		'amarilla_hero_show_booking' => true,
+		'amarilla_hero_image'        => 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=900&q=80',
+		'amarilla_hero_badge'        => 'K vyzvednutí dnes',
+		'amarilla_hero_stat_value'   => 'od 25 €',
+		'amarilla_hero_stat_label'   => 'Cena za den',
+
+		'amarilla_trust_enabled' => true,
+
+		'amarilla_why_enabled'      => true,
+		'amarilla_why_eyebrow'      => 'Proč si vybrat nás',
+		'amarilla_why_title'        => 'Místní tým, který ostrov',
+		'amarilla_why_title_accent' => 'zná.',
+		'amarilla_why_lead'         => 'Auto si nepůjčujete jenom kvůli kolům. Půjčujete si svobodu objevovat Tenerife podle sebe. Postaráme se o vše ostatní.',
+
+		'amarilla_tips_enabled' => true,
+		'amarilla_tips_eyebrow' => 'Tipy z ostrova',
+		'amarilla_tips_title'   => 'Tenerife, které stojí za to.',
+		'amarilla_tips_lead'    => 'Co navštívit s autem? Pár míst, kde to skutečně žije, sepsaných od lidí, co tady bydlí.',
+
+		'amarilla_cta_enabled'      => true,
+		'amarilla_cta_title'        => 'Připraveni vyrazit na',
+		'amarilla_cta_title_accent' => 'cestu?',
+		'amarilla_cta_lead'         => 'Napište nám termín a my připravíme nabídku na míru. Odpovídáme do hodiny.',
+		'amarilla_cta_btn_text'     => 'Poptat termín',
+		'amarilla_cta_btn_url'      => '/kontakt/',
+
+		'amarilla_footer_about'      => 'Autopůjčovna provozovaná místními. Tenerife pro vás.',
+		'amarilla_footer_col1_title' => 'Stránky',
+		'amarilla_footer_col1_links' => "Domů|/\nVozový park|/vozovy-park/\nSlužby|/sluzby/\nO nás|/o-nas/\nKontakt|/kontakt/",
+		'amarilla_footer_col2_title' => 'Pomoc',
+		'amarilla_footer_col2_links' => "Časté dotazy|/faq/\nPojištění|/pojisteni/\nStorno podmínky|/storno-podminky/\nObchodní podmínky|/obchodni-podminky/",
+		'amarilla_footer_copyright'  => '© ' . date( 'Y' ) . ' Amarilla Car Hire. Všechna práva vyhrazena.',
+
+		'amarilla_locations_enabled' => true,
+		'amarilla_locations_eyebrow' => 'Kde nás najdete',
+		'amarilla_locations_title'   => 'Pobočky po celém ostrově.',
+		'amarilla_locations_lead'    => 'Vozy si můžete vyzvednout přímo na letišti nebo si je přivezeme zdarma na váš hotel.',
+	);
+
+	foreach ( array( 'facebook', 'instagram', 'youtube', 'tripadvisor' ) as $social ) {
+		$defaults[ "amarilla_social_{$social}" ] = '';
+	}
+
+	$trust_defaults = array(
+		1 => array( 'check', 'Bez depozitu', 'Žádná blokace na kartě' ),
+		2 => array( 'shield', 'Plné pojištění', 'V ceně všech vozů' ),
+		3 => array( 'clock', '24/7 podpora', 'Česky, anglicky, španělsky' ),
+		4 => array( 'location', 'Vyzvednutí na letišti', 'TFS i TFN, zdarma' ),
+	);
+	foreach ( $trust_defaults as $i => $item ) {
+		$defaults[ "amarilla_trust_{$i}_icon" ]     = $item[0];
+		$defaults[ "amarilla_trust_{$i}_title" ]    = $item[1];
+		$defaults[ "amarilla_trust_{$i}_subtitle" ] = $item[2];
+	}
+
+	$why_defaults = array(
+		1 => array( 'Cena', 'Žádné skryté poplatky', 'Cena, kterou vidíte, je cena, kterou zaplatíte. Pojištění, neomezené kilometry i druhý řidič v ceně.' ),
+		2 => array( 'Servis', 'Auta v perfektním stavu', 'Pravidelná údržba a kontroly. Většina vozů je mladší tří let.' ),
+		3 => array( 'Lidé', 'Mluvíme česky', 'Český servis přímo na ostrově. Komunikace, papírování i podpora bez jazykových bariér.' ),
+		4 => array( 'Volnost', 'Jste v plánu', 'Bezplatné storno do 48 hodin před vyzvednutím. Změna termínu kdykoli.' ),
+	);
+	foreach ( $why_defaults as $i => $item ) {
+		$defaults[ "amarilla_why_{$i}_category" ] = $item[0];
+		$defaults[ "amarilla_why_{$i}_title" ]    = $item[1];
+		$defaults[ "amarilla_why_{$i}_desc" ]     = $item[2];
+	}
+
+	$tips_defaults = array(
+		1 => array( 'Příroda', 'Národní park Teide za úsvitu', 'https://images.unsplash.com/photo-1583425423320-1f1f0c8b4a3a?auto=format&fit=crop&w=900&q=80' ),
+		2 => array( 'Trasy', 'Pohoří Anaga', 'https://images.unsplash.com/photo-1571893544028-06b07af6dade?auto=format&fit=crop&w=700&q=80' ),
+		3 => array( 'Vesnice', 'Masca a Garachico', 'https://images.unsplash.com/photo-1535914254981-b5012eebbd15?auto=format&fit=crop&w=700&q=80' ),
+	);
+	foreach ( $tips_defaults as $i => $item ) {
+		$defaults[ "amarilla_tip_{$i}_tag" ]   = $item[0];
+		$defaults[ "amarilla_tip_{$i}_title" ] = $item[1];
+		$defaults[ "amarilla_tip_{$i}_image" ] = $item[2];
+		$defaults[ "amarilla_tip_{$i}_url" ]   = '';
+	}
+
+	$location_defaults = array(
+		1 => array( 'Letiště Tenerife Sur (TFS)', "Avenida Bruselas\n38660 Adeje", '7:00 – 23:00', '28.0444', '-16.5727' ),
+		2 => array( 'Letiště Tenerife Norte (TFN)', "Avenida Ángel Sanz Briz\n38297 La Laguna", '7:00 – 22:00', '28.4843', '-16.3415' ),
+		3 => array( 'Los Cristianos — pobočka', "Calle General Franco 25\n38650 Arona", '9:00 – 19:00', '28.0476', '-16.7164' ),
+	);
+	for ( $i = 1; $i <= 6; $i++ ) {
+		$item = isset( $location_defaults[ $i ] ) ? $location_defaults[ $i ] : array( '', '', '', '', '' );
+
+		$defaults[ "amarilla_loc_{$i}_name" ]    = $item[0];
+		$defaults[ "amarilla_loc_{$i}_address" ] = $item[1];
+		$defaults[ "amarilla_loc_{$i}_hours" ]   = $item[2];
+		$defaults[ "amarilla_loc_{$i}_lat" ]     = $item[3];
+		$defaults[ "amarilla_loc_{$i}_lng" ]     = $item[4];
+	}
+
+	return $defaults;
+}
+
+/**
+ * Vrátí výchozí hodnotu jednoho Customizer nastavení.
+ */
+function amarilla_get_theme_default( $setting, $fallback = '' ) {
+	$defaults = amarilla_get_theme_defaults();
+
+	return array_key_exists( $setting, $defaults ) ? $defaults[ $setting ] : $fallback;
+}
+
+/**
+ * Wrapper nad get_theme_mod() se sdíleným fallbackem.
+ */
+function amarilla_get_theme_mod( $setting, $fallback = null ) {
+	if ( null === $fallback ) {
+		$fallback = amarilla_get_theme_default( $setting );
+	}
+
+	return get_theme_mod( $setting, $fallback );
+}
+
+/**
  * URL na kontaktní stránku
  */
 function amarilla_get_contact_url() {
@@ -37,7 +193,7 @@ function amarilla_get_fleet_url() {
  * Telefon (hlavní, z Customizeru)
  */
 function amarilla_get_phone() {
-	return get_theme_mod( 'amarilla_phone', '+34 922 000 000' );
+	return amarilla_get_theme_mod( 'amarilla_phone' );
 }
 
 /**
@@ -52,14 +208,14 @@ function amarilla_get_phone_link() {
  * E-mail
  */
 function amarilla_get_email() {
-	return get_theme_mod( 'amarilla_email', 'info@autopujcovna-tenerife.cz' );
+	return amarilla_get_theme_mod( 'amarilla_email' );
 }
 
 /**
  * Adresa (jeden řádek)
  */
 function amarilla_get_address() {
-	return get_theme_mod( 'amarilla_address', __( 'Letiště Tenerife Sur, Avenida Bruselas, 38660', 'amarilla' ) );
+	return amarilla_get_theme_mod( 'amarilla_address' );
 }
 
 /* ============================================================
@@ -158,7 +314,7 @@ function amarilla_get_business_schema_node() {
 	}
 
 	// Otevírací doba (jednoduchá normalizace z customizeru `amarilla_hours`)
-	$hours = get_theme_mod( 'amarilla_hours', '' );
+	$hours = amarilla_get_theme_mod( 'amarilla_hours' );
 	if ( $hours && preg_match( '/(\d{1,2})(?:[:.](\d{2}))?\s*[–—\-až]+\s*(\d{1,2})(?:[:.](\d{2}))?/u', $hours, $m ) ) {
 		$node['openingHoursSpecification'] = array(
 			array(

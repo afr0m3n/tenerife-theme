@@ -6,19 +6,19 @@
  * Description: Úvodní hero sekce. Veškerý obsah lze upravit v Customizeru (Vzhled → Přizpůsobit → Amarilla → Hero).
  */
 
-$eyebrow      = get_theme_mod( 'amarilla_hero_eyebrow', 'Autopůjčovna na Tenerife' );
-$title        = get_theme_mod( 'amarilla_hero_title', 'Tenerife po vašem' );
-$title_accent = get_theme_mod( 'amarilla_hero_title_accent', 'rytmu.' );
-$lead         = get_theme_mod( 'amarilla_hero_lead', 'Půjčte si auto bez starostí.' );
-$btn1_text    = get_theme_mod( 'amarilla_hero_btn1_text', 'Prohlédnout vozy' );
-$btn1_url     = get_theme_mod( 'amarilla_hero_btn1_url', '/vozovy-park/' );
-$btn2_text    = get_theme_mod( 'amarilla_hero_btn2_text', 'Jak to funguje' );
-$btn2_url     = get_theme_mod( 'amarilla_hero_btn2_url', '/kontakt/' );
-$hero_image   = get_theme_mod( 'amarilla_hero_image', 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=900&q=80' );
-$badge        = get_theme_mod( 'amarilla_hero_badge', 'K vyzvednutí dnes' );
-$stat_value   = get_theme_mod( 'amarilla_hero_stat_value', 'od 25 €' );
-$stat_label   = get_theme_mod( 'amarilla_hero_stat_label', 'Cena za den' );
-$show_booking = get_theme_mod( 'amarilla_hero_show_booking', true );
+$eyebrow      = amarilla_get_theme_mod( 'amarilla_hero_eyebrow' );
+$title        = amarilla_get_theme_mod( 'amarilla_hero_title' );
+$title_accent = amarilla_get_theme_mod( 'amarilla_hero_title_accent' );
+$lead         = amarilla_get_theme_mod( 'amarilla_hero_lead' );
+$btn1_text    = amarilla_get_theme_mod( 'amarilla_hero_btn1_text' );
+$btn1_url     = amarilla_get_theme_mod( 'amarilla_hero_btn1_url' );
+$btn2_text    = amarilla_get_theme_mod( 'amarilla_hero_btn2_text' );
+$btn2_url     = amarilla_get_theme_mod( 'amarilla_hero_btn2_url' );
+$hero_image   = amarilla_get_theme_mod( 'amarilla_hero_image' );
+$badge        = amarilla_get_theme_mod( 'amarilla_hero_badge' );
+$stat_value   = amarilla_get_theme_mod( 'amarilla_hero_stat_value' );
+$stat_label   = amarilla_get_theme_mod( 'amarilla_hero_stat_label' );
+$show_booking = amarilla_get_theme_mod( 'amarilla_hero_show_booking' );
 ?>
 <!-- wp:group {"align":"full","tagName":"section","className":"amarilla-hero","layout":{"type":"default"}} -->
 <section class="wp-block-group alignfull amarilla-hero">
@@ -32,7 +32,7 @@ $show_booking = get_theme_mod( 'amarilla_hero_show_booking', true );
 			<h1 class="amarilla-hero-title">
 				<?php echo wp_kses_post( $title ); ?>
 				<?php if ( $title_accent ) : ?>
-					<br><em><?php echo esc_html( $title_accent ); ?></em>
+					<br><em class="amarilla-hero-accent"><?php echo esc_html( $title_accent ); ?></em>
 				<?php endif; ?>
 			</h1>
 			<?php if ( $lead ) : ?>
@@ -44,14 +44,14 @@ $show_booking = get_theme_mod( 'amarilla_hero_show_booking', true );
 			<?php else : ?>
 				<div class="amarilla-hero-actions">
 					<?php if ( $btn1_text && $btn1_url ) : ?>
-						<a href="<?php echo esc_url( $btn1_url ); ?>" class="amarilla-btn amarilla-btn--primary">
-							<?php echo esc_html( $btn1_text ); ?>
+						<a href="<?php echo esc_url( $btn1_url ); ?>" class="amarilla-btn amarilla-btn--primary amarilla-hero-cta-primary">
+							<span class="amarilla-hero-cta-primary-text"><?php echo esc_html( $btn1_text ); ?></span>
 							<svg class="arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
 						</a>
 					<?php endif; ?>
 					<?php if ( $btn2_text && $btn2_url ) : ?>
-						<a href="<?php echo esc_url( $btn2_url ); ?>" class="amarilla-btn amarilla-btn--ghost">
-							<?php echo esc_html( $btn2_text ); ?>
+						<a href="<?php echo esc_url( $btn2_url ); ?>" class="amarilla-btn amarilla-btn--ghost amarilla-hero-cta-secondary">
+							<span class="amarilla-hero-cta-secondary-text"><?php echo esc_html( $btn2_text ); ?></span>
 						</a>
 					<?php endif; ?>
 				</div>

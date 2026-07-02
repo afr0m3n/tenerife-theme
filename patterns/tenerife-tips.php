@@ -6,21 +6,21 @@
  * Description: Tmavá sekce s tipy. Obsah v Customizeru → Amarilla → Tipy z Tenerife.
  */
 
-if ( ! get_theme_mod( 'amarilla_tips_enabled', true ) ) {
+if ( ! amarilla_get_theme_mod( 'amarilla_tips_enabled' ) ) {
 	return;
 }
 
-$eyebrow = get_theme_mod( 'amarilla_tips_eyebrow', 'Tipy z ostrova' );
-$title   = get_theme_mod( 'amarilla_tips_title', 'Tenerife, které stojí za to.' );
-$lead    = get_theme_mod( 'amarilla_tips_lead', '' );
+$eyebrow = amarilla_get_theme_mod( 'amarilla_tips_eyebrow' );
+$title   = amarilla_get_theme_mod( 'amarilla_tips_title' );
+$lead    = amarilla_get_theme_mod( 'amarilla_tips_lead' );
 
 $tips = array();
 for ( $i = 1; $i <= 3; $i++ ) {
 	$tips[] = array(
-		'tag'   => get_theme_mod( "amarilla_tip_{$i}_tag", '' ),
-		'title' => get_theme_mod( "amarilla_tip_{$i}_title", '' ),
-		'image' => get_theme_mod( "amarilla_tip_{$i}_image", '' ),
-		'url'   => get_theme_mod( "amarilla_tip_{$i}_url", '' ),
+		'tag'   => amarilla_get_theme_mod( "amarilla_tip_{$i}_tag" ),
+		'title' => amarilla_get_theme_mod( "amarilla_tip_{$i}_title" ),
+		'image' => amarilla_get_theme_mod( "amarilla_tip_{$i}_image" ),
+		'url'   => amarilla_get_theme_mod( "amarilla_tip_{$i}_url" ),
 	);
 }
 ?>
@@ -38,7 +38,7 @@ for ( $i = 1; $i <= 3; $i++ ) {
 			<?php endif; ?>
 		</div>
 		<?php if ( $lead ) : ?>
-			<p><?php echo esc_html( $lead ); ?></p>
+			<p class="amarilla-tips-lead"><?php echo esc_html( $lead ); ?></p>
 		<?php endif; ?>
 	</div>
 	<div class="amarilla-tips-grid">

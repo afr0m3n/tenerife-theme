@@ -6,13 +6,13 @@
  * Description: Sekce s mapou poboček (OpenStreetMap embed). Konfigurovatelná v Customizeru.
  */
 
-$enabled = get_theme_mod( 'amarilla_locations_enabled', true );
+$enabled = amarilla_get_theme_mod( 'amarilla_locations_enabled' );
 if ( ! $enabled ) {
 	return;
 }
-$eyebrow = get_theme_mod( 'amarilla_locations_eyebrow', 'Kde nás najdete' );
-$title   = get_theme_mod( 'amarilla_locations_title', 'Pobočky po celém ostrově.' );
-$lead    = get_theme_mod( 'amarilla_locations_lead', 'Vozy si můžete vyzvednout přímo na letišti nebo si je přivezeme zdarma na váš hotel.' );
+$eyebrow = amarilla_get_theme_mod( 'amarilla_locations_eyebrow' );
+$title   = amarilla_get_theme_mod( 'amarilla_locations_title' );
+$lead    = amarilla_get_theme_mod( 'amarilla_locations_lead' );
 ?>
 <!-- wp:group {"align":"full","tagName":"section","className":"amarilla-locations","layout":{"type":"default"}} -->
 <section class="wp-block-group alignfull amarilla-locations">

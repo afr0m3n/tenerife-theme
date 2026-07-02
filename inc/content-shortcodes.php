@@ -41,14 +41,14 @@ function amarilla_get_icon( $name, $size = 18 ) {
  * TOPBAR — kompletní obsah jako jediný shortcode
  * ============================================================ */
 function amarilla_sc_topbar() {
-	if ( ! get_theme_mod( 'amarilla_topbar_enabled', true ) ) {
+	if ( ! amarilla_get_theme_mod( 'amarilla_topbar_enabled' ) ) {
 		return '';
 	}
 
-	$phone_display = get_theme_mod( 'amarilla_topbar_phone', '+420 702 143 084' );
-	$phone_link    = get_theme_mod( 'amarilla_topbar_phone_link', '+420702143084' );
-	$location      = get_theme_mod( 'amarilla_topbar_location', 'Letiště Tenerife Sur (TFS)' );
-	$show_langs    = get_theme_mod( 'amarilla_topbar_show_langs', true );
+	$phone_display = amarilla_get_theme_mod( 'amarilla_topbar_phone' );
+	$phone_link    = amarilla_get_theme_mod( 'amarilla_topbar_phone_link' );
+	$location      = amarilla_get_theme_mod( 'amarilla_topbar_location' );
+	$show_langs    = amarilla_get_theme_mod( 'amarilla_topbar_show_langs' );
 
 	ob_start();
 	?>
@@ -56,15 +56,15 @@ function amarilla_sc_topbar() {
 		<div class="amarilla-topbar-inner">
 			<div class="amarilla-topbar-info">
 				<?php if ( $phone_display ) : ?>
-					<a href="tel:<?php echo esc_attr( $phone_link ); ?>">
+					<a class="amarilla-topbar-phone-link" href="tel:<?php echo esc_attr( $phone_link ); ?>">
 						<?php echo amarilla_get_icon( 'phone', 14 ); ?>
-						<?php echo esc_html( $phone_display ); ?>
+						<span class="amarilla-topbar-phone"><?php echo esc_html( $phone_display ); ?></span>
 					</a>
 				<?php endif; ?>
 				<?php if ( $location ) : ?>
 					<span>
 						<?php echo amarilla_get_icon( 'location', 14 ); ?>
-						<?php echo esc_html( $location ); ?>
+						<span class="amarilla-topbar-location"><?php echo esc_html( $location ); ?></span>
 					</span>
 				<?php endif; ?>
 			</div>
@@ -82,8 +82,8 @@ add_shortcode( 'amarilla_topbar', 'amarilla_sc_topbar' );
  * LOGO (s fallbackem na textové logo)
  * ============================================================ */
 function amarilla_sc_logo() {
-	$width      = (int) get_theme_mod( 'amarilla_logo_width', 160 );
-	$show_text  = get_theme_mod( 'amarilla_show_text_logo_fallback', true );
+	$width      = (int) amarilla_get_theme_mod( 'amarilla_logo_width' );
+	$show_text  = amarilla_get_theme_mod( 'amarilla_show_text_logo_fallback' );
 	$site_name  = get_bloginfo( 'name' );
 	$home_url   = home_url( '/' );
 
@@ -126,7 +126,7 @@ add_shortcode( 'amarilla_logo', 'amarilla_sc_logo' );
  * LOGO PRO TMAVÉ POZADÍ (patička)
  * ============================================================ */
 function amarilla_sc_logo_light() {
-	$light_logo = get_theme_mod( 'amarilla_logo_light', '' );
+	$light_logo = amarilla_get_theme_mod( 'amarilla_logo_light' );
 	$home_url   = home_url( '/' );
 	$site_name  = get_bloginfo( 'name' );
 
@@ -168,22 +168,22 @@ add_shortcode( 'amarilla_header_cta', 'amarilla_sc_header_cta' );
  * KOMPLETNÍ PATIČKA (jediný shortcode pro footer.html)
  * ============================================================ */
 function amarilla_sc_footer() {
-	$about      = get_theme_mod( 'amarilla_footer_about', 'Autopůjčovna provozovaná místními. Tenerife pro vás.' );
-	$col1_title = get_theme_mod( 'amarilla_footer_col1_title', 'Stránky' );
-	$col1_links = get_theme_mod( 'amarilla_footer_col1_links', '' );
-	$col2_title = get_theme_mod( 'amarilla_footer_col2_title', 'Pomoc' );
-	$col2_links = get_theme_mod( 'amarilla_footer_col2_links', '' );
-	$copyright  = get_theme_mod( 'amarilla_footer_copyright', '© ' . date( 'Y' ) . ' Amarilla Car Hire.' );
+	$about      = amarilla_get_theme_mod( 'amarilla_footer_about' );
+	$col1_title = amarilla_get_theme_mod( 'amarilla_footer_col1_title' );
+	$col1_links = amarilla_get_theme_mod( 'amarilla_footer_col1_links' );
+	$col2_title = amarilla_get_theme_mod( 'amarilla_footer_col2_title' );
+	$col2_links = amarilla_get_theme_mod( 'amarilla_footer_col2_links' );
+	$copyright  = amarilla_get_theme_mod( 'amarilla_footer_copyright' );
 
 	$phone   = amarilla_get_phone();
 	$email   = amarilla_get_email();
-	$address = get_theme_mod( 'amarilla_address_full', '' );
+	$address = amarilla_get_theme_mod( 'amarilla_address_full' );
 
 	$socials = array(
-		'facebook'    => get_theme_mod( 'amarilla_social_facebook', '' ),
-		'instagram'   => get_theme_mod( 'amarilla_social_instagram', '' ),
-		'youtube'     => get_theme_mod( 'amarilla_social_youtube', '' ),
-		'tripadvisor' => get_theme_mod( 'amarilla_social_tripadvisor', '' ),
+		'facebook'    => amarilla_get_theme_mod( 'amarilla_social_facebook' ),
+		'instagram'   => amarilla_get_theme_mod( 'amarilla_social_instagram' ),
+		'youtube'     => amarilla_get_theme_mod( 'amarilla_social_youtube' ),
+		'tripadvisor' => amarilla_get_theme_mod( 'amarilla_social_tripadvisor' ),
 	);
 
 	ob_start();
@@ -212,11 +212,11 @@ function amarilla_sc_footer() {
 					array( $col1_title, $col1_links ),
 					array( $col2_title, $col2_links ),
 				);
-				foreach ( $columns as $col ) :
+				foreach ( $columns as $index => $col ) :
 					$lines = array_filter( array_map( 'trim', explode( "\n", $col[1] ) ) );
 					if ( empty( $lines ) ) continue;
 					?>
-					<div>
+					<div class="amarilla-footer-col amarilla-footer-col-<?php echo esc_attr( $index + 1 ); ?>">
 						<h5><?php echo esc_html( $col[0] ); ?></h5>
 						<ul>
 							<?php foreach ( $lines as $line ) :
@@ -230,7 +230,7 @@ function amarilla_sc_footer() {
 					</div>
 				<?php endforeach; ?>
 
-				<div>
+				<div class="amarilla-footer-contact">
 					<h5><?php esc_html_e( 'Kontakt', 'amarilla' ); ?></h5>
 					<ul>
 						<?php if ( $phone ) : ?>
@@ -264,8 +264,8 @@ function amarilla_sc_contact_info() {
 	$phone        = amarilla_get_phone();
 	$phone_link   = amarilla_get_phone_link();
 	$email        = amarilla_get_email();
-	$address_full = get_theme_mod( 'amarilla_address_full', "Letiště Tenerife Sur (TFS)\nAvenida Bruselas, 38660\nAdeje, Santa Cruz de Tenerife" );
-	$hours        = get_theme_mod( 'amarilla_hours', "Po–Ne, 7:00–23:00\nMimo provozní dobu volejte na uvedené číslo." );
+	$address_full = amarilla_get_theme_mod( 'amarilla_address_full' );
+	$hours        = amarilla_get_theme_mod( 'amarilla_hours' );
 
 	$address_lines = array_filter( array_map( 'trim', preg_split( "/\r\n|\r|\n/", $address_full ) ) );
 	$hours_lines   = array_filter( array_map( 'trim', preg_split( "/\r\n|\r|\n/", $hours ) ) );

@@ -32,7 +32,7 @@ function amarilla_customize_register( $wp_customize ) {
 	 * Stávající WP sekce "title_tagline" jen rozšíříme.
 	 * ============================================================ */
 	$wp_customize->add_setting( 'amarilla_logo_width', array(
-		'default'           => 160,
+		'default'           => amarilla_get_theme_default( 'amarilla_logo_width' ),
 		'sanitize_callback' => 'absint',
 		'transport'         => 'refresh',
 	) );
@@ -45,7 +45,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_logo_light', array(
-		'default'           => '',
+		'default'           => amarilla_get_theme_default( 'amarilla_logo_light' ),
 		'sanitize_callback' => 'esc_url_raw',
 	) );
 	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'amarilla_logo_light', array(
@@ -55,7 +55,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) ) );
 
 	$wp_customize->add_setting( 'amarilla_show_text_logo_fallback', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_show_text_logo_fallback' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_show_text_logo_fallback', array(
@@ -75,7 +75,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_topbar_enabled', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_topbar_enabled' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_topbar_enabled', array(
@@ -85,7 +85,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_topbar_phone', array(
-		'default'           => '+420 702 143 084',
+		'default'           => amarilla_get_theme_default( 'amarilla_topbar_phone' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_topbar_phone', array(
@@ -96,7 +96,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_topbar_phone_link', array(
-		'default'           => '+420702143084',
+		'default'           => amarilla_get_theme_default( 'amarilla_topbar_phone_link' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_topbar_phone_link', array(
@@ -107,7 +107,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_topbar_location', array(
-		'default'           => 'Letiště Tenerife Sur (TFS)',
+		'default'           => amarilla_get_theme_default( 'amarilla_topbar_location' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_topbar_location', array(
@@ -117,7 +117,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_topbar_show_langs', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_topbar_show_langs' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_topbar_show_langs', array(
@@ -138,7 +138,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_phone', array(
-		'default'           => '+34 922 000 000',
+		'default'           => amarilla_get_theme_default( 'amarilla_phone' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_phone', array(
@@ -148,7 +148,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_email', array(
-		'default'           => 'info@autopujcovna-tenerife.cz',
+		'default'           => amarilla_get_theme_default( 'amarilla_email' ),
 		'sanitize_callback' => 'sanitize_email',
 	) );
 	$wp_customize->add_control( 'amarilla_email', array(
@@ -158,7 +158,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_address', array(
-		'default'           => 'Letiště Tenerife Sur, Avenida Bruselas, 38660',
+		'default'           => amarilla_get_theme_default( 'amarilla_address' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_address', array(
@@ -168,7 +168,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_address_full', array(
-		'default'           => "Letiště Tenerife Sur (TFS)\nAvenida Bruselas, 38660\nAdeje, Santa Cruz de Tenerife",
+		'default'           => amarilla_get_theme_default( 'amarilla_address_full' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_address_full', array(
@@ -179,7 +179,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hours', array(
-		'default'           => 'Po–Ne, 7:00–23:00',
+		'default'           => amarilla_get_theme_default( 'amarilla_hours' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hours', array(
@@ -189,7 +189,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_whatsapp', array(
-		'default'           => '',
+		'default'           => amarilla_get_theme_default( 'amarilla_whatsapp' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_whatsapp', array(
@@ -210,7 +210,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_eyebrow', array(
-		'default'           => 'Autopůjčovna na Tenerife',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_eyebrow' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_eyebrow', array(
@@ -221,7 +221,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_title', array(
-		'default'           => 'Tenerife po vašem',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_title', array(
@@ -232,7 +232,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_title_accent', array(
-		'default'           => 'rytmu.',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_title_accent' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_title_accent', array(
@@ -242,7 +242,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_lead', array(
-		'default'           => 'Půjčte si auto bez starostí. Vyzvednutí přímo na letišti, plné pojištění a žádné skryté poplatky. Místní tým, který ostrov zná.',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_lead' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_lead', array(
@@ -252,7 +252,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_btn1_text', array(
-		'default'           => 'Prohlédnout vozy',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_btn1_text' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_btn1_text', array(
@@ -262,7 +262,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_btn1_url', array(
-		'default'           => '/vozovy-park/',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_btn1_url' ),
 		'sanitize_callback' => 'esc_url_raw',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_btn1_url', array(
@@ -272,7 +272,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_btn2_text', array(
-		'default'           => 'Jak to funguje',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_btn2_text' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_btn2_text', array(
@@ -282,7 +282,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_btn2_url', array(
-		'default'           => '/kontakt/',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_btn2_url' ),
 		'sanitize_callback' => 'esc_url_raw',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_btn2_url', array(
@@ -292,7 +292,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_show_booking', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_show_booking' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_show_booking', array(
@@ -303,7 +303,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_image', array(
-		'default'           => 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=900&q=80',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_image' ),
 		'sanitize_callback' => 'esc_url_raw',
 	) );
 	$wp_customize->add_control( new WP_Customize_Image_Control( $wp_customize, 'amarilla_hero_image', array(
@@ -313,7 +313,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) ) );
 
 	$wp_customize->add_setting( 'amarilla_hero_badge', array(
-		'default'           => 'K vyzvednutí dnes',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_badge' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_badge', array(
@@ -323,7 +323,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_stat_value', array(
-		'default'           => 'od 25 €',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_stat_value' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_stat_value', array(
@@ -333,7 +333,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_hero_stat_label', array(
-		'default'           => 'Cena za den',
+		'default'           => amarilla_get_theme_default( 'amarilla_hero_stat_label' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_hero_stat_label', array(
@@ -353,7 +353,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_trust_enabled', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_trust_enabled' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_trust_enabled', array(
@@ -363,10 +363,10 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$trust_defaults = array(
-		1 => array( 'check',    'Bez depozitu',         'Žádná blokace na kartě' ),
-		2 => array( 'shield',   'Plné pojištění',       'V ceně všech vozů' ),
-		3 => array( 'clock',    '24/7 podpora',         'Česky, anglicky, španělsky' ),
-		4 => array( 'location', 'Vyzvednutí na letišti', 'TFS i TFN, zdarma' ),
+		1 => array( amarilla_get_theme_default( 'amarilla_trust_1_icon' ), amarilla_get_theme_default( 'amarilla_trust_1_title' ), amarilla_get_theme_default( 'amarilla_trust_1_subtitle' ) ),
+		2 => array( amarilla_get_theme_default( 'amarilla_trust_2_icon' ), amarilla_get_theme_default( 'amarilla_trust_2_title' ), amarilla_get_theme_default( 'amarilla_trust_2_subtitle' ) ),
+		3 => array( amarilla_get_theme_default( 'amarilla_trust_3_icon' ), amarilla_get_theme_default( 'amarilla_trust_3_title' ), amarilla_get_theme_default( 'amarilla_trust_3_subtitle' ) ),
+		4 => array( amarilla_get_theme_default( 'amarilla_trust_4_icon' ), amarilla_get_theme_default( 'amarilla_trust_4_title' ), amarilla_get_theme_default( 'amarilla_trust_4_subtitle' ) ),
 	);
 	$icon_choices = array(
 		'check'    => __( '✓ Zaškrtnutí', 'amarilla' ),
@@ -421,7 +421,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_why_enabled', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_why_enabled' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_why_enabled', array(
@@ -431,7 +431,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_why_eyebrow', array(
-		'default'           => 'Proč si vybrat nás',
+		'default'           => amarilla_get_theme_default( 'amarilla_why_eyebrow' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_why_eyebrow', array(
@@ -441,7 +441,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_why_title', array(
-		'default'           => 'Místní tým, který ostrov',
+		'default'           => amarilla_get_theme_default( 'amarilla_why_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_why_title', array(
@@ -451,7 +451,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_why_title_accent', array(
-		'default'           => 'zná.',
+		'default'           => amarilla_get_theme_default( 'amarilla_why_title_accent' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_why_title_accent', array(
@@ -461,7 +461,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_why_lead', array(
-		'default'           => 'Auto si nepůjčujete jenom kvůli kolům. Půjčujete si svobodu objevovat Tenerife podle sebe. Postaráme se o vše ostatní.',
+		'default'           => amarilla_get_theme_default( 'amarilla_why_lead' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_why_lead', array(
@@ -471,10 +471,10 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$why_defaults = array(
-		1 => array( 'Cena',    'Žádné skryté poplatky',     'Cena, kterou vidíte, je cena, kterou zaplatíte. Pojištění, neomezené kilometry i druhý řidič v ceně.' ),
-		2 => array( 'Servis',  'Auta v perfektním stavu',   'Pravidelná údržba a kontroly. Většina vozů je mladší tří let.' ),
-		3 => array( 'Lidé',    'Mluvíme česky',             'Český servis přímo na ostrově. Komunikace, papírování i podpora bez jazykových bariér.' ),
-		4 => array( 'Volnost', 'Jste v plánu',              'Bezplatné storno do 48 hodin před vyzvednutím. Změna termínu kdykoli.' ),
+		1 => array( amarilla_get_theme_default( 'amarilla_why_1_category' ), amarilla_get_theme_default( 'amarilla_why_1_title' ), amarilla_get_theme_default( 'amarilla_why_1_desc' ) ),
+		2 => array( amarilla_get_theme_default( 'amarilla_why_2_category' ), amarilla_get_theme_default( 'amarilla_why_2_title' ), amarilla_get_theme_default( 'amarilla_why_2_desc' ) ),
+		3 => array( amarilla_get_theme_default( 'amarilla_why_3_category' ), amarilla_get_theme_default( 'amarilla_why_3_title' ), amarilla_get_theme_default( 'amarilla_why_3_desc' ) ),
+		4 => array( amarilla_get_theme_default( 'amarilla_why_4_category' ), amarilla_get_theme_default( 'amarilla_why_4_title' ), amarilla_get_theme_default( 'amarilla_why_4_desc' ) ),
 	);
 	foreach ( $why_defaults as $i => $defaults ) {
 		$wp_customize->add_setting( "amarilla_why_{$i}_category", array(
@@ -518,7 +518,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_tips_enabled', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_tips_enabled' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_tips_enabled', array(
@@ -528,7 +528,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_tips_eyebrow', array(
-		'default'           => 'Tipy z ostrova',
+		'default'           => amarilla_get_theme_default( 'amarilla_tips_eyebrow' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_tips_eyebrow', array(
@@ -538,7 +538,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_tips_title', array(
-		'default'           => 'Tenerife, které stojí za to.',
+		'default'           => amarilla_get_theme_default( 'amarilla_tips_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_tips_title', array(
@@ -548,7 +548,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_tips_lead', array(
-		'default'           => 'Co navštívit s autem? Pár míst, kde to skutečně žije, sepsaných od lidí, co tady bydlí.',
+		'default'           => amarilla_get_theme_default( 'amarilla_tips_lead' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_tips_lead', array(
@@ -558,9 +558,9 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$tips_defaults = array(
-		1 => array( 'Příroda', 'Národní park Teide za úsvitu', 'https://images.unsplash.com/photo-1583425423320-1f1f0c8b4a3a?auto=format&fit=crop&w=900&q=80' ),
-		2 => array( 'Trasy',   'Pohoří Anaga',                  'https://images.unsplash.com/photo-1571893544028-06b07af6dade?auto=format&fit=crop&w=700&q=80' ),
-		3 => array( 'Vesnice', 'Masca a Garachico',             'https://images.unsplash.com/photo-1535914254981-b5012eebbd15?auto=format&fit=crop&w=700&q=80' ),
+		1 => array( amarilla_get_theme_default( 'amarilla_tip_1_tag' ), amarilla_get_theme_default( 'amarilla_tip_1_title' ), amarilla_get_theme_default( 'amarilla_tip_1_image' ) ),
+		2 => array( amarilla_get_theme_default( 'amarilla_tip_2_tag' ), amarilla_get_theme_default( 'amarilla_tip_2_title' ), amarilla_get_theme_default( 'amarilla_tip_2_image' ) ),
+		3 => array( amarilla_get_theme_default( 'amarilla_tip_3_tag' ), amarilla_get_theme_default( 'amarilla_tip_3_title' ), amarilla_get_theme_default( 'amarilla_tip_3_image' ) ),
 	);
 	foreach ( $tips_defaults as $i => $defaults ) {
 		$wp_customize->add_setting( "amarilla_tip_{$i}_tag", array(
@@ -593,7 +593,7 @@ function amarilla_customize_register( $wp_customize ) {
 		) ) );
 
 		$wp_customize->add_setting( "amarilla_tip_{$i}_url", array(
-			'default'           => '',
+			'default'           => amarilla_get_theme_default( "amarilla_tip_{$i}_url" ),
 			'sanitize_callback' => 'esc_url_raw',
 		) );
 		$wp_customize->add_control( "amarilla_tip_{$i}_url", array(
@@ -614,7 +614,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_cta_enabled', array(
-		'default'           => true,
+		'default'           => amarilla_get_theme_default( 'amarilla_cta_enabled' ),
 		'sanitize_callback' => 'amarilla_sanitize_checkbox',
 	) );
 	$wp_customize->add_control( 'amarilla_cta_enabled', array(
@@ -624,7 +624,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_cta_title', array(
-		'default'           => 'Připraveni vyrazit na',
+		'default'           => amarilla_get_theme_default( 'amarilla_cta_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_cta_title', array(
@@ -634,7 +634,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_cta_title_accent', array(
-		'default'           => 'cestu?',
+		'default'           => amarilla_get_theme_default( 'amarilla_cta_title_accent' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_cta_title_accent', array(
@@ -644,7 +644,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_cta_lead', array(
-		'default'           => 'Napište nám termín a my připravíme nabídku na míru. Odpovídáme do hodiny.',
+		'default'           => amarilla_get_theme_default( 'amarilla_cta_lead' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_cta_lead', array(
@@ -654,7 +654,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_cta_btn_text', array(
-		'default'           => 'Poptat termín',
+		'default'           => amarilla_get_theme_default( 'amarilla_cta_btn_text' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_cta_btn_text', array(
@@ -664,7 +664,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_cta_btn_url', array(
-		'default'           => '/kontakt/',
+		'default'           => amarilla_get_theme_default( 'amarilla_cta_btn_url' ),
 		'sanitize_callback' => 'esc_url_raw',
 	) );
 	$wp_customize->add_control( 'amarilla_cta_btn_url', array(
@@ -684,7 +684,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_footer_about', array(
-		'default'           => 'Autopůjčovna provozovaná místními. Tenerife pro vás.',
+		'default'           => amarilla_get_theme_default( 'amarilla_footer_about' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_footer_about', array(
@@ -694,7 +694,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_footer_col1_title', array(
-		'default'           => 'Stránky',
+		'default'           => amarilla_get_theme_default( 'amarilla_footer_col1_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_footer_col1_title', array(
@@ -704,7 +704,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_footer_col1_links', array(
-		'default'           => "Domů|/\nVozový park|/vozovy-park/\nSlužby|/sluzby/\nO nás|/o-nas/\nKontakt|/kontakt/",
+		'default'           => amarilla_get_theme_default( 'amarilla_footer_col1_links' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_footer_col1_links', array(
@@ -715,7 +715,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_footer_col2_title', array(
-		'default'           => 'Pomoc',
+		'default'           => amarilla_get_theme_default( 'amarilla_footer_col2_title' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_footer_col2_title', array(
@@ -725,7 +725,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_footer_col2_links', array(
-		'default'           => "Časté dotazy|/faq/\nPojištění|/pojisteni/\nStorno podmínky|/storno-podminky/\nObchodní podmínky|/obchodni-podminky/",
+		'default'           => amarilla_get_theme_default( 'amarilla_footer_col2_links' ),
 		'sanitize_callback' => 'sanitize_textarea_field',
 	) );
 	$wp_customize->add_control( 'amarilla_footer_col2_links', array(
@@ -735,7 +735,7 @@ function amarilla_customize_register( $wp_customize ) {
 	) );
 
 	$wp_customize->add_setting( 'amarilla_footer_copyright', array(
-		'default'           => '© ' . date( 'Y' ) . ' Amarilla Car Hire. Všechna práva vyhrazena.',
+		'default'           => amarilla_get_theme_default( 'amarilla_footer_copyright' ),
 		'sanitize_callback' => 'sanitize_text_field',
 	) );
 	$wp_customize->add_control( 'amarilla_footer_copyright', array(
@@ -762,7 +762,7 @@ function amarilla_customize_register( $wp_customize ) {
 	);
 	foreach ( $socials as $key => $label ) {
 		$wp_customize->add_setting( "amarilla_social_{$key}", array(
-			'default'           => '',
+			'default'           => amarilla_get_theme_default( "amarilla_social_{$key}" ),
 			'sanitize_callback' => 'esc_url_raw',
 		) );
 		$wp_customize->add_control( "amarilla_social_{$key}", array(
@@ -782,6 +782,21 @@ function amarilla_sanitize_checkbox( $value ) {
 }
 
 /**
+ * Obsah hero nadpisu pro selective refresh.
+ */
+function amarilla_customize_render_hero_title() {
+	$title        = amarilla_get_theme_mod( 'amarilla_hero_title' );
+	$title_accent = amarilla_get_theme_mod( 'amarilla_hero_title_accent' );
+	$output       = wp_kses_post( $title );
+
+	if ( $title_accent ) {
+		$output .= '<br><em class="amarilla-hero-accent">' . esc_html( $title_accent ) . '</em>';
+	}
+
+	return $output;
+}
+
+/**
  * Selective refresh — aktualizace náhledu bez kompletního reloadu
  */
 function amarilla_customize_partials( $wp_customize ) {
@@ -790,20 +805,31 @@ function amarilla_customize_partials( $wp_customize ) {
 	}
 
 	$partials = array(
-		'amarilla_hero_title'      => '.amarilla-hero h1',
-		'amarilla_hero_lead'       => '.amarilla-hero-lead',
-		'amarilla_hero_eyebrow'    => '.amarilla-hero .amarilla-eyebrow',
-		'amarilla_footer_about'    => '.amarilla-footer-about p',
-		'amarilla_footer_copyright' => '.amarilla-footer-bottom span:first-child',
+		'amarilla_hero_title'       => array(
+			'selector'        => '.amarilla-hero-title',
+			'render_callback' => 'amarilla_customize_render_hero_title',
+		),
+		'amarilla_hero_lead'        => array(
+			'selector' => '.amarilla-hero-lead',
+		),
+		'amarilla_hero_eyebrow'     => array(
+			'selector' => '.amarilla-hero .amarilla-eyebrow',
+		),
+		'amarilla_footer_about'     => array(
+			'selector' => '.amarilla-footer-about p',
+		),
+		'amarilla_footer_copyright' => array(
+			'selector' => '.amarilla-footer-bottom span:first-child',
+		),
 	);
 
-	foreach ( $partials as $setting => $selector ) {
+	foreach ( $partials as $setting => $partial ) {
 		if ( $wp_customize->get_setting( $setting ) ) {
 			$wp_customize->get_setting( $setting )->transport = 'postMessage';
 			$wp_customize->selective_refresh->add_partial( $setting, array(
-				'selector'        => $selector,
-				'render_callback' => function() use ( $setting ) {
-					return get_theme_mod( $setting );
+				'selector'        => $partial['selector'],
+				'render_callback' => isset( $partial['render_callback'] ) ? $partial['render_callback'] : function() use ( $setting ) {
+					return esc_html( amarilla_get_theme_mod( $setting ) );
 				},
 			) );
 		}

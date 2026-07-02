@@ -31,20 +31,23 @@
 	} );
 
 	bind( 'amarilla_hero_title', function( newValue ) {
-		// Zachováme případný accent <span> na konci, pokud existuje
-		var $h1 = $( '.amarilla-hero h1' ).first();
-		var $accent = $h1.find( '.amarilla-hero-accent' ).clone();
-		$h1.text( newValue + ' ' );
+		// Zachováme zvýrazněný řádek, protože v HTML je součástí stejného <h1>.
+		var $h1 = $( '.amarilla-hero-title' ).first();
+		var $accent = $h1.find( '.amarilla-hero-accent' ).first().clone();
+		$h1.empty().append( document.createTextNode( newValue ) );
 		if ( $accent.length ) {
-			$h1.append( $accent );
+			$h1.append( $( '<br>' ) ).append( $accent );
 		}
 	} );
 
 	bind( 'amarilla_hero_title_accent', function( newValue ) {
-		var $accent = $( '.amarilla-hero h1 .amarilla-hero-accent' );
-		if ( $accent.length ) {
-			$accent.text( newValue );
+		var $h1 = $( '.amarilla-hero-title' ).first();
+		var $accent = $h1.find( '.amarilla-hero-accent' ).first();
+		if ( ! $accent.length && newValue ) {
+			$accent = $( '<em class="amarilla-hero-accent"></em>' );
+			$h1.append( $( '<br>' ) ).append( $accent );
 		}
+		$accent.text( newValue );
 	} );
 
 	bind( 'amarilla_hero_lead', function( newValue ) {
@@ -56,7 +59,7 @@
 	} );
 
 	bind( 'amarilla_hero_stat_value', function( newValue ) {
-		$( '.amarilla-hero-stat-value' ).text( newValue );
+		$( '.amarilla-hero-stat-num' ).text( newValue );
 	} );
 
 	bind( 'amarilla_hero_stat_label', function( newValue ) {
@@ -64,11 +67,11 @@
 	} );
 
 	bind( 'amarilla_hero_btn1_text', function( newValue ) {
-		$( '.amarilla-hero-cta-primary' ).text( newValue );
+		$( '.amarilla-hero-cta-primary-text' ).text( newValue );
 	} );
 
 	bind( 'amarilla_hero_btn2_text', function( newValue ) {
-		$( '.amarilla-hero-cta-secondary' ).text( newValue );
+		$( '.amarilla-hero-cta-secondary-text' ).text( newValue );
 	} );
 
 	// --- CTA SEKCE ---
@@ -77,7 +80,7 @@
 	} );
 
 	bind( 'amarilla_cta_btn_text', function( newValue ) {
-		$( '.amarilla-cta-button' ).text( newValue );
+		$( '.amarilla-cta-button-text' ).text( newValue );
 	} );
 
 	// --- WHY US ---
@@ -108,16 +111,20 @@
 	} );
 
 	bind( 'amarilla_footer_col1_title', function( newValue ) {
-		$( '.amarilla-footer-col-1 h4' ).text( newValue );
+		$( '.amarilla-footer-col-1 h5' ).text( newValue );
 	} );
 
 	bind( 'amarilla_footer_col2_title', function( newValue ) {
-		$( '.amarilla-footer-col-2 h4' ).text( newValue );
+		$( '.amarilla-footer-col-2 h5' ).text( newValue );
 	} );
 
 	// --- TOPBAR ---
-	bind( 'amarilla_topbar_phone_display', function( newValue ) {
+	bind( 'amarilla_topbar_phone', function( newValue ) {
 		$( '.amarilla-topbar-phone' ).text( newValue );
+	} );
+
+	bind( 'amarilla_topbar_phone_link', function( newValue ) {
+		$( '.amarilla-topbar-phone-link' ).attr( 'href', 'tel:' + newValue );
 	} );
 
 	bind( 'amarilla_topbar_location', function( newValue ) {

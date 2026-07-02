@@ -6,16 +6,16 @@
  * Description: Tmavý pruh se 4 ikonami. Obsah lze upravit v Customizeru → Amarilla → Pruh důvěry.
  */
 
-if ( ! get_theme_mod( 'amarilla_trust_enabled', true ) ) {
+if ( ! amarilla_get_theme_mod( 'amarilla_trust_enabled' ) ) {
 	return;
 }
 
 $items = array();
 for ( $i = 1; $i <= 4; $i++ ) {
 	$items[] = array(
-		'icon'     => get_theme_mod( "amarilla_trust_{$i}_icon", 'check' ),
-		'title'    => get_theme_mod( "amarilla_trust_{$i}_title", '' ),
-		'subtitle' => get_theme_mod( "amarilla_trust_{$i}_subtitle", '' ),
+		'icon'     => amarilla_get_theme_mod( "amarilla_trust_{$i}_icon" ),
+		'title'    => amarilla_get_theme_mod( "amarilla_trust_{$i}_title" ),
+		'subtitle' => amarilla_get_theme_mod( "amarilla_trust_{$i}_subtitle" ),
 	);
 }
 ?>

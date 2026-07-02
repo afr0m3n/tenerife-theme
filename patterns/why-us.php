@@ -6,23 +6,23 @@
  * Description: Sekce se 4 důvody, proč si vybrat firmu. Obsah v Customizeru → Amarilla → Proč si vybrat nás.
  */
 
-if ( ! get_theme_mod( 'amarilla_why_enabled', true ) ) {
+if ( ! amarilla_get_theme_mod( 'amarilla_why_enabled' ) ) {
 	return;
 }
 
-$eyebrow      = get_theme_mod( 'amarilla_why_eyebrow', 'Proč si vybrat nás' );
-$title        = get_theme_mod( 'amarilla_why_title', 'Místní tým, který ostrov' );
-$title_accent = get_theme_mod( 'amarilla_why_title_accent', 'zná.' );
-$lead         = get_theme_mod( 'amarilla_why_lead', '' );
+$eyebrow      = amarilla_get_theme_mod( 'amarilla_why_eyebrow' );
+$title        = amarilla_get_theme_mod( 'amarilla_why_title' );
+$title_accent = amarilla_get_theme_mod( 'amarilla_why_title_accent' );
+$lead         = amarilla_get_theme_mod( 'amarilla_why_lead' );
 $about_url    = get_page_by_path( 'o-nas' ) ? get_permalink( get_page_by_path( 'o-nas' ) ) : home_url( '/o-nas/' );
 
 $features = array();
 for ( $i = 1; $i <= 4; $i++ ) {
 	$features[] = array(
 		'num'      => str_pad( $i, 2, '0', STR_PAD_LEFT ),
-		'category' => get_theme_mod( "amarilla_why_{$i}_category", '' ),
-		'title'    => get_theme_mod( "amarilla_why_{$i}_title", '' ),
-		'desc'     => get_theme_mod( "amarilla_why_{$i}_desc", '' ),
+		'category' => amarilla_get_theme_mod( "amarilla_why_{$i}_category" ),
+		'title'    => amarilla_get_theme_mod( "amarilla_why_{$i}_title" ),
+		'desc'     => amarilla_get_theme_mod( "amarilla_why_{$i}_desc" ),
 	);
 }
 ?>
