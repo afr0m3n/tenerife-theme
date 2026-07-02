@@ -797,6 +797,42 @@ function amarilla_customize_render_hero_title() {
 }
 
 /**
+ * Vykreslí existující pattern jako HTML fragment pro selective refresh.
+ */
+function amarilla_customize_render_pattern( $pattern_file ) {
+	$path = AMARILLA_DIR . '/patterns/' . $pattern_file;
+
+	if ( ! file_exists( $path ) ) {
+		return '';
+	}
+
+	ob_start();
+	include $path;
+	return ob_get_clean();
+}
+
+/**
+ * Selective refresh callback: pruh důvěry.
+ */
+function amarilla_customize_render_trust_strip() {
+	return amarilla_customize_render_pattern( 'trust-strip.php' );
+}
+
+/**
+ * Selective refresh callback: sekce Proč si vybrat nás.
+ */
+function amarilla_customize_render_why_us() {
+	return amarilla_customize_render_pattern( 'why-us.php' );
+}
+
+/**
+ * Selective refresh callback: sekce Tipy z Tenerife.
+ */
+function amarilla_customize_render_tenerife_tips() {
+	return amarilla_customize_render_pattern( 'tenerife-tips.php' );
+}
+
+/**
  * Selective refresh — aktualizace náhledu bez kompletního reloadu
  */
 function amarilla_customize_partials( $wp_customize ) {
@@ -834,6 +870,102 @@ function amarilla_customize_partials( $wp_customize ) {
 			) );
 		}
 	}
+
+	$section_partials = array(
+		'amarilla_trust_strip'   => array(
+			'selector'        => '.amarilla-trust',
+			'primary_setting' => 'amarilla_trust_1_title',
+			'settings'        => array(
+				'amarilla_trust_enabled',
+				'amarilla_trust_1_icon',
+				'amarilla_trust_1_title',
+				'amarilla_trust_1_subtitle',
+				'amarilla_trust_2_icon',
+				'amarilla_trust_2_title',
+				'amarilla_trust_2_subtitle',
+				'amarilla_trust_3_icon',
+				'amarilla_trust_3_title',
+				'amarilla_trust_3_subtitle',
+				'amarilla_trust_4_icon',
+				'amarilla_trust_4_title',
+				'amarilla_trust_4_subtitle',
+			),
+			'render_callback' => 'amarilla_customize_render_trust_strip',
+		),
+		'amarilla_why_us'        => array(
+			'selector'        => '.amarilla-why',
+			'primary_setting' => 'amarilla_why_title',
+			'settings'        => array(
+				'amarilla_why_enabled',
+				'amarilla_why_eyebrow',
+				'amarilla_why_title',
+				'amarilla_why_title_accent',
+				'amarilla_why_lead',
+				'amarilla_why_1_category',
+				'amarilla_why_1_title',
+				'amarilla_why_1_desc',
+				'amarilla_why_2_category',
+				'amarilla_why_2_title',
+				'amarilla_why_2_desc',
+				'amarilla_why_3_category',
+				'amarilla_why_3_title',
+				'amarilla_why_3_desc',
+				'amarilla_why_4_category',
+				'amarilla_why_4_title',
+				'amarilla_why_4_desc',
+			),
+			'render_callback' => 'amarilla_customize_render_why_us',
+		),
+		'amarilla_tenerife_tips' => array(
+			'selector'        => '.amarilla-tips',
+			'primary_setting' => 'amarilla_tips_title',
+			'settings'        => array(
+				'amarilla_tips_enabled',
+				'amarilla_tips_eyebrow',
+				'amarilla_tips_title',
+				'amarilla_tips_lead',
+				'amarilla_tip_1_tag',
+				'amarilla_tip_1_title',
+				'amarilla_tip_1_image',
+				'amarilla_tip_1_url',
+				'amarilla_tip_2_tag',
+				'amarilla_tip_2_title',
+				'amarilla_tip_2_image',
+				'amarilla_tip_2_url',
+				'amarilla_tip_3_tag',
+				'amarilla_tip_3_title',
+				'amarilla_tip_3_image',
+				'amarilla_tip_3_url',
+			),
+			'render_callback' => 'amarilla_customize_render_tenerife_tips',
+		),
+	);
+
+	foreach ( $section_partials as $partial_id => $partial ) {
+		$settings = array_values( array_filter( $partial['settings'], array( $wp_customize, 'get_setting' ) ) );
+
+		if ( empty( $settings ) ) {
+			continue;
+		}
+
+		foreach ( $settings as $setting ) {
+			$wp_customize->get_setting( $setting )->transport = 'postMessage';
+		}
+
+		$partial_args = array(
+			'selector'            => $partial['selector'],
+			'settings'            => $settings,
+			'render_callback'     => $partial['render_callback'],
+			'container_inclusive' => true,
+			'fallback_refresh'    => true,
+		);
+
+		if ( isset( $partial['primary_setting'] ) ) {
+			$partial_args['primary_setting'] = $partial['primary_setting'];
+		}
+
+		$wp_customize->selective_refresh->add_partial( $partial_id, $partial_args );
+	}
 }
 add_action( 'customize_register', 'amarilla_customize_partials', 20 );
 
@@ -850,3 +982,28 @@ function amarilla_customize_preview_js() {
 	);
 }
 add_action( 'customize_preview_init', 'amarilla_customize_preview_js' );
+
+/**
+ * Preview-only pozice edit shortcutů pro full-width sekce.
+ */
+function amarilla_customize_preview_shortcut_styles() {
+	$css = '
+		.amarilla-trust > .customize-partial-edit-shortcut,
+		.amarilla-why > .customize-partial-edit-shortcut,
+		.amarilla-tips > .customize-partial-edit-shortcut {
+			z-index: 100000;
+		}
+		.amarilla-trust > .customize-partial-edit-shortcut button,
+		.amarilla-why > .customize-partial-edit-shortcut button,
+		.amarilla-tips > .customize-partial-edit-shortcut button {
+			left: 12px;
+			top: 12px;
+			z-index: 100001;
+		}
+	';
+
+	wp_register_style( 'amarilla-customize-preview-shortcuts', false, array(), AMARILLA_VERSION );
+	wp_enqueue_style( 'amarilla-customize-preview-shortcuts' );
+	wp_add_inline_style( 'amarilla-customize-preview-shortcuts', $css );
+}
+add_action( 'customize_preview_init', 'amarilla_customize_preview_shortcut_styles' );
