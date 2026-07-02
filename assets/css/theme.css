@@ -1,0 +1,1526 @@
+/**
+ * Amarilla Tenerife — hlavní stylesheet
+ * Verze 1.1.0 — přidán .amarilla-container, robustní full-width sekce,
+ * podpora customizovatelného obsahu (Customizer).
+ */
+
+/* =========================================================
+   1. TOKENY (CSS proměnné)
+   ========================================================= */
+:root {
+	--amarilla-yellow: #F5B800;
+	--amarilla-yellow-soft: #FFE08A;
+	--amarilla-deep: #0F2A3D;
+	--amarilla-deep-soft: #1B3D54;
+	--amarilla-cream: #F8F2E4;
+	--amarilla-cream-soft: #FBF7ED;
+	--amarilla-coral: #E07856;
+	--amarilla-gray-line: rgba(15, 42, 61, 0.12);
+	--amarilla-gray-text: rgba(15, 42, 61, 0.65);
+	--amarilla-shadow: 0 24px 48px -16px rgba(15, 42, 61, 0.18);
+	--amarilla-radius: 16px;
+	--amarilla-radius-pill: 999px;
+	--amarilla-transition: 0.25s ease;
+	--amarilla-container-max: 1320px;
+	--amarilla-container-pad: 40px;
+}
+
+/* =========================================================
+   2. BASE
+   ========================================================= */
+body {
+	font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+	background-color: var(--amarilla-cream);
+	color: var(--amarilla-deep);
+	font-size: 16px;
+	line-height: 1.6;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: 'Fraunces', Georgia, serif;
+	font-weight: 500;
+	letter-spacing: -0.015em;
+	line-height: 1.1;
+}
+
+a { transition: color var(--amarilla-transition); }
+img { max-width: 100%; height: auto; }
+
+/* Skip link */
+.skip-link {
+	position: absolute;
+	left: -9999px;
+	top: auto;
+	background: var(--amarilla-yellow);
+	color: var(--amarilla-deep);
+	padding: 12px 24px;
+	z-index: 9999;
+}
+.skip-link:focus { left: 16px; top: 16px; }
+
+/* --- Universální kontejner pro patterny --- */
+.amarilla-container {
+	max-width: var(--amarilla-container-max);
+	margin: 0 auto;
+	padding-left: var(--amarilla-container-pad);
+	padding-right: var(--amarilla-container-pad);
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* Vynucení full-width pro naše patterny, i kdyby WP přidal omezení */
+.amarilla-hero,
+.amarilla-trust,
+.amarilla-fleet,
+.amarilla-why,
+.amarilla-tips,
+.amarilla-cta,
+.amarilla-footer {
+	max-width: none !important;
+	width: 100%;
+	margin-left: 0 !important;
+	margin-right: 0 !important;
+}
+
+/* =========================================================
+   3. KOMPONENTY
+   ========================================================= */
+
+/* --- Topbar --- */
+.amarilla-topbar {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+	font-size: 13px;
+	padding: 8px 0;
+	letter-spacing: 0.02em;
+}
+.amarilla-topbar-inner {
+	max-width: var(--amarilla-container-max);
+	margin: 0 auto;
+	padding: 0 var(--amarilla-container-pad);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 20px;
+	box-sizing: border-box;
+}
+.amarilla-topbar-info {
+	display: flex;
+	gap: 28px;
+	flex-wrap: wrap;
+}
+.amarilla-topbar-info span,
+.amarilla-topbar-info a {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	opacity: 0.85;
+	color: inherit;
+	text-decoration: none;
+}
+.amarilla-topbar-info a:hover { opacity: 1; color: var(--amarilla-yellow); }
+.amarilla-topbar-info svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* --- Language switcher --- */
+.amarilla-lang-switcher {
+	display: flex;
+	gap: 4px;
+}
+.amarilla-lang-switcher .lang-link {
+	color: var(--amarilla-cream);
+	font-size: 12px;
+	padding: 4px 8px;
+	opacity: 0.6;
+	text-decoration: none;
+	transition: opacity var(--amarilla-transition);
+	border-radius: 4px;
+}
+.amarilla-lang-switcher .lang-link:hover { opacity: 1; }
+.amarilla-lang-switcher .lang-link.active {
+	opacity: 1;
+	font-weight: 600;
+	color: var(--amarilla-yellow);
+}
+
+/* --- Header (nahoře pod topbarem) --- */
+.amarilla-site-header {
+	max-width: none !important;
+}
+.amarilla-header-inner {
+	max-width: var(--amarilla-container-max);
+	margin: 0 auto;
+	width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 32px;
+}
+
+/* --- Logo placeholder + custom logo --- */
+.amarilla-logo-placeholder {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	font-family: 'Fraunces', serif;
+	font-size: 26px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--amarilla-deep);
+	text-decoration: none;
+}
+.amarilla-logo-mark {
+	width: 40px;
+	height: 40px;
+	background: var(--amarilla-yellow);
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--amarilla-deep);
+	flex-shrink: 0;
+}
+.custom-logo-link img,
+.custom-logo {
+	display: block;
+	height: auto;
+	max-width: 220px;
+}
+
+/* --- Tlačítka --- */
+.amarilla-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+	padding: 12px 24px;
+	border-radius: var(--amarilla-radius-pill);
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	transition: all var(--amarilla-transition);
+	border: 1px solid transparent;
+	cursor: pointer;
+	font-family: inherit;
+	line-height: 1.4;
+}
+.amarilla-btn--primary {
+	background: var(--amarilla-yellow);
+	color: var(--amarilla-deep);
+}
+.amarilla-btn--primary:hover {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+	transform: translateY(-1px);
+}
+.amarilla-btn--secondary {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+}
+.amarilla-btn--secondary:hover {
+	background: var(--amarilla-yellow);
+	color: var(--amarilla-deep);
+	transform: translateY(-1px);
+}
+.amarilla-btn--ghost {
+	background: transparent;
+	color: var(--amarilla-deep);
+	border-color: var(--amarilla-deep);
+}
+.amarilla-btn--ghost:hover {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+}
+.amarilla-btn .arrow {
+	width: 14px;
+	height: 14px;
+	transition: transform var(--amarilla-transition);
+}
+.amarilla-btn:hover .arrow { transform: translateX(3px); }
+
+/* --- Eyebrow --- */
+.amarilla-eyebrow {
+	display: inline-flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 13px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--amarilla-gray-text);
+	font-weight: 500;
+	margin-bottom: 16px;
+}
+.amarilla-eyebrow::before {
+	content: '';
+	width: 32px;
+	height: 2px;
+	background: var(--amarilla-yellow);
+}
+
+/* =========================================================
+   4. SEKCE
+   ========================================================= */
+
+/* --- Hero --- */
+.amarilla-hero {
+	padding: 60px 0 80px;
+	position: relative;
+	overflow: hidden;
+	background: var(--amarilla-cream);
+}
+.amarilla-hero::before {
+	content: '';
+	position: absolute;
+	top: -120px;
+	right: -120px;
+	width: 460px;
+	height: 460px;
+	background: var(--amarilla-yellow);
+	border-radius: 50%;
+	opacity: 0.18;
+	pointer-events: none;
+}
+.amarilla-hero-grid {
+	display: grid;
+	grid-template-columns: 1.05fr 1fr;
+	gap: 60px;
+	align-items: center;
+	position: relative;
+	z-index: 1;
+}
+.amarilla-hero-title {
+	font-size: clamp(56px, 7vw, 96px);
+	line-height: 1.05;
+	margin-bottom: 28px;
+}
+.amarilla-hero-title em {
+	font-style: italic;
+	font-weight: 400;
+	color: var(--amarilla-coral);
+}
+.amarilla-hero-lead {
+	font-size: 18px;
+	color: var(--amarilla-gray-text);
+	max-width: 480px;
+	margin: 28px 0 36px;
+	line-height: 1.65;
+}
+.amarilla-hero-actions {
+	display: flex;
+	gap: 14px;
+	flex-wrap: wrap;
+	align-items: center;
+}
+.amarilla-hero-visual {
+	position: relative;
+	aspect-ratio: 4/5;
+	border-radius: 8px;
+	overflow: hidden;
+	background: linear-gradient(180deg, #c9a779 0%, #6e4f3a 100%);
+}
+.amarilla-hero-visual img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.amarilla-hero-visual::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, transparent 50%, rgba(15, 42, 61, 0.35) 100%);
+	pointer-events: none;
+}
+.amarilla-hero-badge {
+	position: absolute;
+	top: 24px;
+	left: 24px;
+	background: var(--amarilla-cream);
+	padding: 12px 18px;
+	border-radius: var(--amarilla-radius-pill);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 13px;
+	font-weight: 500;
+	z-index: 2;
+}
+.amarilla-hero-badge::before {
+	content: '';
+	width: 8px;
+	height: 8px;
+	background: #2BB673;
+	border-radius: 50%;
+	box-shadow: 0 0 0 4px rgba(43, 182, 115, 0.2);
+}
+.amarilla-hero-stat {
+	position: absolute;
+	bottom: 24px;
+	left: 24px;
+	right: 24px;
+	background: rgba(248, 242, 228, 0.95);
+	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(8px);
+	padding: 18px 22px;
+	border-radius: 12px;
+	z-index: 2;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.amarilla-hero-stat-num {
+	font-family: 'Fraunces', serif;
+	font-size: 32px;
+	font-weight: 600;
+}
+.amarilla-hero-stat-label {
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+	line-height: 1.3;
+}
+.amarilla-hero-stat-link {
+	color: var(--amarilla-deep);
+	font-weight: 600;
+	text-decoration: none;
+	font-size: 14px;
+}
+
+/* --- Trust strip --- */
+.amarilla-trust {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+	padding: 28px 0;
+}
+.amarilla-trust-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 20px;
+}
+.amarilla-trust-item {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	font-size: 14px;
+}
+.amarilla-trust-icon {
+	width: 36px;
+	height: 36px;
+	min-width: 36px;
+	background: rgba(245, 184, 0, 0.15);
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--amarilla-yellow);
+	flex-shrink: 0;
+}
+.amarilla-trust-icon svg { width: 18px; height: 18px; }
+.amarilla-trust-item strong { display: block; }
+.amarilla-trust-item small { opacity: 0.7; font-size: 13px; }
+
+/* --- Vozový park --- */
+.amarilla-fleet {
+	padding: 100px 0;
+	background: var(--amarilla-cream-soft);
+}
+.amarilla-section-head {
+	display: flex;
+	justify-content: space-between;
+	align-items: end;
+	margin-bottom: 50px;
+	gap: 40px;
+}
+.amarilla-section-head h2 { font-size: clamp(40px, 5vw, 60px); }
+.amarilla-section-head p {
+	color: var(--amarilla-gray-text);
+	max-width: 380px;
+	font-size: 15px;
+}
+.amarilla-fleet-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
+}
+.amarilla-fleet-empty {
+	grid-column: 1 / -1;
+	text-align: center;
+	padding: 60px 20px;
+	color: var(--amarilla-gray-text);
+}
+.amarilla-fleet-cta {
+	text-align: center;
+	margin-top: 50px;
+}
+
+/* --- Karta vozidla --- */
+.vehicle-card-link {
+	text-decoration: none;
+	color: inherit;
+	display: block;
+}
+.vehicle-card {
+	background: var(--amarilla-cream);
+	border-radius: var(--amarilla-radius);
+	overflow: hidden;
+	transition: transform 0.3s, box-shadow 0.3s;
+	border: 1px solid var(--amarilla-gray-line);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+.vehicle-card:hover {
+	transform: translateY(-4px);
+	box-shadow: var(--amarilla-shadow);
+}
+.vehicle-card-image {
+	aspect-ratio: 16/11;
+	background: linear-gradient(135deg, #e8dfc6 0%, #c4b596 100%);
+	position: relative;
+	overflow: hidden;
+}
+.vehicle-card-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.vehicle-card-tag {
+	position: absolute;
+	top: 16px;
+	left: 16px;
+	background: var(--amarilla-cream);
+	color: var(--amarilla-deep);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	padding: 6px 12px;
+	border-radius: var(--amarilla-radius-pill);
+}
+.vehicle-card-tag.popular { background: var(--amarilla-yellow); }
+.vehicle-card-info {
+	padding: 24px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+.vehicle-card-info h3 {
+	font-size: 24px;
+	margin: 0 0 4px;
+}
+.vehicle-card-tagline {
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+	margin-bottom: 18px;
+}
+.vehicle-specs {
+	display: flex;
+	gap: 18px;
+	flex-wrap: wrap;
+	margin-bottom: 22px;
+	padding-bottom: 22px;
+	border-bottom: 1px solid var(--amarilla-gray-line);
+}
+.vehicle-spec {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+}
+.vehicle-spec svg { width: 14px; height: 14px; flex-shrink: 0; }
+.vehicle-card-footer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-top: auto;
+}
+.vehicle-price-amount {
+	font-family: 'Fraunces', serif;
+	font-size: 28px;
+	font-weight: 600;
+	display: block;
+}
+.vehicle-price-label {
+	font-size: 12px;
+	color: var(--amarilla-gray-text);
+	display: block;
+	margin-top: -4px;
+}
+.vehicle-price-inquire {
+	font-family: 'Fraunces', serif;
+	font-size: 22px;
+	font-weight: 500;
+	color: var(--amarilla-deep);
+	display: block;
+}
+.vehicle-card-arrow {
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: all var(--amarilla-transition);
+	flex-shrink: 0;
+}
+.vehicle-card:hover .vehicle-card-arrow {
+	background: var(--amarilla-yellow);
+	color: var(--amarilla-deep);
+	transform: rotate(-45deg);
+}
+
+/* --- Proč nás --- */
+.amarilla-why {
+	padding: 100px 0;
+	background: var(--amarilla-cream);
+}
+.amarilla-why-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 80px;
+	align-items: start;
+}
+.amarilla-why-grid h2 {
+	font-size: clamp(40px, 5vw, 60px);
+}
+.amarilla-why-grid h2 em {
+	font-style: italic;
+	font-weight: 400;
+	color: var(--amarilla-coral);
+}
+.amarilla-why-lead {
+	color: var(--amarilla-gray-text);
+	margin: 24px 0 32px;
+	max-width: 380px;
+}
+.amarilla-why-features {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 32px 28px;
+}
+.amarilla-feature {
+	padding-top: 18px;
+	border-top: 1px solid var(--amarilla-gray-line);
+}
+.amarilla-feature-num {
+	font-family: 'Fraunces', serif;
+	font-size: 14px;
+	color: var(--amarilla-yellow);
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	margin-bottom: 8px;
+	display: block;
+}
+.amarilla-feature h4 {
+	font-size: 20px;
+	margin: 0 0 8px;
+}
+.amarilla-feature p {
+	font-size: 14px;
+	line-height: 1.55;
+	margin: 0;
+	color: var(--amarilla-gray-text);
+}
+
+/* --- Tipy --- */
+.amarilla-tips {
+	padding: 100px 0;
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+}
+.amarilla-tips h2 { color: var(--amarilla-cream); }
+.amarilla-tips .amarilla-eyebrow { color: var(--amarilla-yellow-soft); }
+.amarilla-tips .amarilla-section-head p { color: rgba(248, 242, 228, 0.7); }
+.amarilla-tips-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 24px;
+}
+.amarilla-tip-card {
+	aspect-ratio: 1.1/1;
+	border-radius: var(--amarilla-radius);
+	overflow: hidden;
+	position: relative;
+	background: var(--amarilla-deep-soft);
+	transition: transform var(--amarilla-transition);
+	display: block;
+	text-decoration: none;
+	color: inherit;
+}
+.amarilla-tip-card:hover { transform: translateY(-4px); }
+.amarilla-tip-card img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	opacity: 0.85;
+	transition: opacity var(--amarilla-transition);
+}
+.amarilla-tip-card:hover img { opacity: 1; }
+.amarilla-tip-card::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(180deg, transparent 40%, rgba(15, 42, 61, 0.85) 100%);
+}
+.amarilla-tip-content {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 24px;
+	z-index: 2;
+}
+.amarilla-tip-content .tag {
+	font-size: 11px;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: var(--amarilla-yellow);
+	margin-bottom: 6px;
+	display: block;
+}
+.amarilla-tip-content h3 {
+	font-size: 22px;
+	margin: 0;
+	color: var(--amarilla-cream);
+}
+
+/* --- CTA sekce --- */
+.amarilla-cta {
+	padding: 100px 0;
+	background: var(--amarilla-cream);
+	text-align: center;
+}
+.amarilla-cta-inner {
+	max-width: 760px;
+}
+.amarilla-cta-title {
+	font-size: clamp(48px, 6vw, 80px);
+	margin-bottom: 28px;
+}
+.amarilla-cta-title em {
+	font-style: italic;
+	font-weight: 400;
+	color: var(--amarilla-coral);
+}
+.amarilla-cta-lead {
+	color: var(--amarilla-gray-text);
+	font-size: 18px;
+	margin-bottom: 36px;
+}
+.amarilla-cta-actions {
+	display: flex;
+	gap: 14px;
+	justify-content: center;
+	flex-wrap: wrap;
+}
+
+/* --- Detail vozidla --- */
+.vehicle-detail {
+	padding: 60px 0 100px;
+	background: var(--amarilla-cream);
+}
+.vehicle-detail-grid {
+	display: grid;
+	grid-template-columns: 1.3fr 1fr;
+	gap: 60px;
+	align-items: start;
+}
+.vehicle-detail-gallery {
+	border-radius: var(--amarilla-radius);
+	overflow: hidden;
+	aspect-ratio: 4/3;
+	background: linear-gradient(135deg, #e8dfc6 0%, #c4b596 100%);
+}
+.vehicle-detail-gallery img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+.vehicle-detail-info h1 {
+	font-size: clamp(40px, 5vw, 56px);
+	margin-bottom: 12px;
+}
+.vehicle-detail-tagline {
+	color: var(--amarilla-gray-text);
+	font-size: 18px;
+	margin-bottom: 32px;
+}
+.vehicle-detail-specs {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 12px;
+	margin: 32px 0;
+	padding: 24px;
+	background: var(--amarilla-cream-soft);
+	border-radius: 12px;
+	border: 1px solid var(--amarilla-gray-line);
+}
+.vehicle-detail-spec {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+.vehicle-detail-spec .label {
+	font-size: 12px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--amarilla-gray-text);
+}
+.vehicle-detail-spec .value {
+	font-family: 'Fraunces', serif;
+	font-size: 18px;
+	font-weight: 500;
+}
+.vehicle-detail-cta {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+	padding: 32px;
+	border-radius: 12px;
+	margin-top: 24px;
+}
+.vehicle-detail-cta h3 {
+	color: var(--amarilla-cream);
+	margin-bottom: 12px;
+	font-size: 22px;
+}
+.vehicle-detail-cta p {
+	color: rgba(248, 242, 228, 0.75);
+	margin-bottom: 20px;
+	font-size: 14px;
+}
+
+/* --- Kontakt --- */
+.amarilla-contact-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 60px;
+	margin: 40px 0;
+}
+.amarilla-contact-info dl {
+	display: grid;
+	gap: 24px;
+}
+.amarilla-contact-info dt {
+	font-size: 12px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--amarilla-gray-text);
+	margin-bottom: 4px;
+}
+.amarilla-contact-info dd {
+	font-family: 'Fraunces', serif;
+	font-size: 22px;
+	margin: 0;
+}
+.amarilla-contact-info a { color: var(--amarilla-deep); text-decoration: none; }
+.amarilla-contact-info a:hover { color: var(--amarilla-yellow); }
+
+/* --- Footer --- */
+.amarilla-footer {
+	background: var(--amarilla-deep);
+	color: var(--amarilla-cream);
+	padding: 80px 0 30px;
+}
+.amarilla-footer-container {
+	max-width: var(--amarilla-container-max);
+	margin: 0 auto;
+	padding: 0 var(--amarilla-container-pad);
+	box-sizing: border-box;
+}
+.amarilla-footer-grid {
+	display: grid;
+	grid-template-columns: 1.3fr 1fr 1fr 1.2fr;
+	gap: 50px;
+	margin-bottom: 60px;
+}
+.amarilla-footer h5 {
+	font-size: 14px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	margin-bottom: 18px;
+	color: var(--amarilla-yellow);
+	font-weight: 500;
+}
+.amarilla-footer ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.amarilla-footer li { margin-bottom: 10px; }
+.amarilla-footer a {
+	color: rgba(248, 242, 228, 0.75);
+	text-decoration: none;
+	font-size: 14px;
+}
+.amarilla-footer a:hover { color: var(--amarilla-yellow); }
+.amarilla-footer-about p {
+	font-size: 14px;
+	line-height: 1.6;
+	color: rgba(248, 242, 228, 0.75);
+	margin-top: 18px;
+}
+.amarilla-footer-address {
+	color: rgba(248, 242, 228, 0.65);
+	font-size: 14px;
+	margin-top: 14px;
+	line-height: 1.5;
+}
+.amarilla-footer-social {
+	display: flex;
+	gap: 8px;
+	margin-top: 18px;
+}
+.amarilla-footer-social a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background: rgba(248, 242, 228, 0.1);
+	color: var(--amarilla-cream);
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+}
+.amarilla-footer-social a:hover {
+	background: var(--amarilla-yellow);
+	color: var(--amarilla-deep);
+}
+.amarilla-footer-bottom {
+	padding-top: 30px;
+	border-top: 1px solid rgba(248, 242, 228, 0.15);
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	font-size: 13px;
+	color: rgba(248, 242, 228, 0.55);
+}
+
+/* --- 404 --- */
+.amarilla-404 {
+	min-height: 60vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
+	padding: 100px 20px;
+}
+.amarilla-404 .num {
+	font-family: 'Fraunces', serif;
+	font-size: clamp(120px, 20vw, 240px);
+	line-height: 0.9;
+	color: var(--amarilla-yellow);
+	margin-bottom: 20px;
+}
+
+/* =========================================================
+   5. RESPONZIVITA
+   ========================================================= */
+@media (max-width: 1024px) {
+	.amarilla-hero-grid,
+	.amarilla-why-grid,
+	.vehicle-detail-grid,
+	.amarilla-contact-grid {
+		grid-template-columns: 1fr;
+		gap: 40px;
+	}
+	.amarilla-fleet-grid,
+	.amarilla-tips-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	.amarilla-trust-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	.amarilla-footer-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	.amarilla-header-inner {
+		gap: 16px;
+	}
+	.amarilla-header-inner .amarilla-btn--primary {
+		display: none;
+	}
+}
+
+@media (max-width: 640px) {
+	:root {
+		--amarilla-container-pad: 20px;
+	}
+	.amarilla-fleet-grid,
+	.amarilla-tips-grid,
+	.amarilla-footer-grid,
+	.amarilla-trust-grid,
+	.amarilla-why-features {
+		grid-template-columns: 1fr;
+	}
+	.vehicle-detail-specs { grid-template-columns: 1fr; }
+	.amarilla-topbar-info { gap: 12px; font-size: 12px; }
+	.amarilla-topbar-info span:last-child { display: none; }
+	.amarilla-section-head {
+		flex-direction: column;
+		align-items: start;
+	}
+	.amarilla-fleet,
+	.amarilla-why,
+	.amarilla-tips,
+	.amarilla-cta {
+		padding: 60px 0;
+	}
+	.amarilla-hero {
+		padding: 40px 0 60px;
+	}
+}
+
+/* =========================================================
+   6. v1.2.0 — BOOKING WIDGET, INQUIRY FORM, LOCATIONS, BLOG
+   ========================================================= */
+
+/* --- Honeypot --- */
+.amarilla-hp {
+	position: absolute !important;
+	left: -9999px !important;
+	top: -9999px !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+}
+
+/* --- Booking widget (compact, in hero) --- */
+.amarilla-booking-widget {
+	background: var(--amarilla-cream-soft);
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: var(--amarilla-radius);
+	padding: 20px;
+	box-shadow: var(--amarilla-shadow);
+	margin-top: 28px;
+}
+.amarilla-booking-widget-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 12px;
+	margin-bottom: 16px;
+}
+.amarilla-bw-field {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+.amarilla-bw-label {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--amarilla-gray-text);
+	margin-bottom: 4px;
+}
+.amarilla-booking-widget input,
+.amarilla-booking-widget select {
+	font-family: inherit;
+	font-size: 14px;
+	color: var(--amarilla-deep);
+	background: #fff;
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: 10px;
+	padding: 10px 12px;
+	width: 100%;
+	box-sizing: border-box;
+	transition: border-color var(--amarilla-transition);
+	-webkit-appearance: none;
+	appearance: none;
+}
+.amarilla-booking-widget select {
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230F2A3D' stroke-width='2.5'><polyline points='6,9 12,15 18,9'/></svg>");
+	background-repeat: no-repeat;
+	background-position: right 10px center;
+	padding-right: 32px;
+}
+.amarilla-booking-widget input:focus,
+.amarilla-booking-widget select:focus {
+	outline: 0;
+	border-color: var(--amarilla-yellow);
+	box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.18);
+}
+.amarilla-bw-submit {
+	width: 100%;
+	justify-content: center;
+}
+.amarilla-bw-note {
+	margin: 10px 0 0;
+	font-size: 12px;
+	color: var(--amarilla-gray-text);
+	text-align: center;
+}
+
+/* --- Inquiry form (full, on /kontakt/) --- */
+.amarilla-inquiry-form {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+}
+.amarilla-inquiry-section h3 {
+	font-family: 'Fraunces', Georgia, serif;
+	font-size: 1.25rem;
+	margin: 0 0 16px 0;
+	color: var(--amarilla-deep);
+}
+.amarilla-inquiry-grid {
+	display: grid;
+	gap: 16px;
+}
+.amarilla-inquiry-grid--2 {
+	grid-template-columns: 1fr 1fr;
+}
+.amarilla-inquiry-grid--full {
+	grid-column: 1 / -1;
+}
+.amarilla-inquiry-form label {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--amarilla-gray-text);
+}
+.amarilla-inquiry-form label > span:first-child em {
+	color: var(--amarilla-coral);
+	font-style: normal;
+}
+.amarilla-inquiry-form input[type=text],
+.amarilla-inquiry-form input[type=email],
+.amarilla-inquiry-form input[type=tel],
+.amarilla-inquiry-form input[type=date],
+.amarilla-inquiry-form input[type=time],
+.amarilla-inquiry-form input[type=number],
+.amarilla-inquiry-form select,
+.amarilla-inquiry-form textarea {
+	font-family: inherit;
+	font-size: 15px;
+	color: var(--amarilla-deep);
+	font-weight: 400;
+	background: #fff;
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: 12px;
+	padding: 12px 14px;
+	transition: border-color var(--amarilla-transition), box-shadow var(--amarilla-transition);
+}
+.amarilla-inquiry-form input:focus,
+.amarilla-inquiry-form select:focus,
+.amarilla-inquiry-form textarea:focus {
+	outline: 0;
+	border-color: var(--amarilla-yellow);
+	box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.18);
+}
+.amarilla-inquiry-form textarea {
+	resize: vertical;
+	min-height: 100px;
+	font-family: inherit;
+}
+.amarilla-inquiry-gdpr {
+	flex-direction: row !important;
+	align-items: flex-start;
+	gap: 12px !important;
+	font-size: 14px;
+	color: var(--amarilla-deep);
+	font-weight: 400 !important;
+	line-height: 1.5;
+}
+.amarilla-inquiry-gdpr input[type=checkbox] {
+	width: 18px;
+	height: 18px;
+	margin: 2px 0 0 0;
+	accent-color: var(--amarilla-yellow);
+	flex-shrink: 0;
+}
+.amarilla-inquiry-gdpr a {
+	color: var(--amarilla-deep);
+	text-decoration: underline;
+}
+.amarilla-inquiry-submit {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+}
+.amarilla-inquiry-note {
+	margin: 0;
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+}
+.amarilla-inquiry-error {
+	background: rgba(224, 120, 86, 0.12);
+	color: #8c3d27;
+	border-left: 3px solid var(--amarilla-coral);
+	padding: 14px 16px;
+	border-radius: 8px;
+	font-size: 14px;
+	font-weight: 500;
+}
+.amarilla-inquiry-success {
+	text-align: center;
+	padding: 40px 20px;
+	background: var(--amarilla-cream-soft);
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: var(--amarilla-radius);
+}
+.amarilla-inquiry-success-icon {
+	color: var(--amarilla-yellow);
+	margin-bottom: 12px;
+}
+.amarilla-inquiry-success h3 {
+	font-family: 'Fraunces', serif;
+	font-size: 1.75rem;
+	margin: 0 0 12px;
+	color: var(--amarilla-deep);
+}
+.amarilla-inquiry-success p {
+	color: var(--amarilla-gray-text);
+	margin: 0 0 16px;
+}
+
+/* --- Locations section --- */
+.amarilla-locations {
+	padding: 100px 0;
+	background: var(--amarilla-cream-soft);
+}
+.amarilla-locations-grid {
+	display: grid;
+	grid-template-columns: 380px 1fr;
+	gap: 40px;
+	margin-top: 48px;
+}
+.amarilla-locations-list {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+}
+.amarilla-location-card {
+	background: #fff;
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: var(--amarilla-radius);
+	padding: 20px;
+	display: flex;
+	gap: 16px;
+	transition: transform var(--amarilla-transition), box-shadow var(--amarilla-transition);
+}
+.amarilla-location-card:hover {
+	transform: translateY(-2px);
+	box-shadow: var(--amarilla-shadow);
+}
+.amarilla-location-index {
+	flex-shrink: 0;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: var(--amarilla-yellow);
+	color: var(--amarilla-deep);
+	font-family: 'Fraunces', serif;
+	font-weight: 600;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+}
+.amarilla-location-body { flex: 1; min-width: 0; }
+.amarilla-location-body h3 {
+	font-family: 'Fraunces', serif;
+	font-size: 18px;
+	margin: 0 0 8px;
+	color: var(--amarilla-deep);
+}
+.amarilla-location-address {
+	font-size: 14px;
+	color: var(--amarilla-gray-text);
+	margin: 0 0 8px;
+	line-height: 1.5;
+}
+.amarilla-location-hours {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+	margin: 0 0 8px;
+}
+.amarilla-location-link {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--amarilla-deep);
+	text-decoration: none;
+	margin-top: 4px;
+}
+.amarilla-location-link:hover {
+	color: var(--amarilla-coral);
+}
+.amarilla-locations-map {
+	position: relative;
+	border-radius: var(--amarilla-radius);
+	overflow: hidden;
+	min-height: 480px;
+	border: 1px solid var(--amarilla-gray-line);
+	background: #e9e5d8;
+}
+.amarilla-locations-map iframe {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 480px;
+	border: 0;
+}
+.amarilla-locations-attribution {
+	position: absolute;
+	bottom: 6px;
+	right: 6px;
+	margin: 0;
+	font-size: 10px;
+	background: rgba(255, 255, 255, 0.85);
+	padding: 2px 8px;
+	border-radius: 4px;
+	color: var(--amarilla-gray-text);
+}
+.amarilla-locations-attribution a {
+	color: var(--amarilla-deep);
+	text-decoration: none;
+}
+
+/* --- Blog: header, post grid, post card --- */
+.amarilla-blog-header {
+	padding: 100px 0 40px;
+	background: var(--amarilla-cream-soft);
+	border-bottom: 1px solid var(--amarilla-gray-line);
+}
+.amarilla-blog-header h1 {
+	font-size: clamp(2.5rem, 5vw, 3.75rem);
+	margin: 8px 0 16px;
+	max-width: 22ch;
+}
+.amarilla-blog-lead {
+	font-size: 1.125rem;
+	color: var(--amarilla-gray-text);
+	max-width: 60ch;
+	line-height: 1.6;
+	margin: 0;
+}
+.amarilla-blog-grid .wp-block-post-template {
+	display: grid !important;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 40px;
+	list-style: none;
+	padding: 0;
+}
+.amarilla-blog-grid .wp-block-post {
+	margin: 0;
+}
+.amarilla-post-card-wrap {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+.amarilla-post-card-wrap .wp-block-post-featured-image {
+	margin: 0 0 8px;
+	overflow: hidden;
+	border-radius: 16px;
+}
+.amarilla-post-card-wrap .wp-block-post-featured-image img {
+	transition: transform 0.5s ease;
+	width: 100%;
+	height: auto;
+}
+.amarilla-post-card-wrap:hover .wp-block-post-featured-image img {
+	transform: scale(1.04);
+}
+.amarilla-post-card-cat,
+.amarilla-post-card-wrap .wp-block-post-terms {
+	font-size: 12px !important;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--amarilla-coral) !important;
+	font-weight: 600;
+	margin: 0 !important;
+}
+.amarilla-post-card-cat a,
+.amarilla-post-card-wrap .wp-block-post-terms a {
+	color: inherit !important;
+	text-decoration: none;
+}
+.amarilla-post-card-wrap .wp-block-post-title {
+	font-family: 'Fraunces', serif;
+	font-weight: 500;
+	letter-spacing: -0.015em;
+	line-height: 1.15;
+	margin: 4px 0 8px;
+}
+.amarilla-post-card-wrap .wp-block-post-title a {
+	color: var(--amarilla-deep);
+	text-decoration: none;
+}
+.amarilla-post-card-wrap .wp-block-post-title a:hover {
+	color: var(--amarilla-coral);
+}
+.amarilla-post-card-wrap .wp-block-post-excerpt {
+	font-size: 15px;
+	color: var(--amarilla-gray-text);
+	line-height: 1.6;
+	margin: 0;
+}
+.amarilla-post-card-wrap .wp-block-post-excerpt__more-link {
+	display: none;
+}
+.amarilla-post-card-wrap .wp-block-post-date {
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+	margin: 4px 0 0;
+}
+
+/* --- Single post content --- */
+.amarilla-post-content {
+	font-size: 1.0625rem;
+	line-height: 1.75;
+}
+.amarilla-post-content h2 {
+	font-size: clamp(1.75rem, 3vw, 2.25rem);
+	margin: 48px 0 16px;
+}
+.amarilla-post-content h3 {
+	font-size: 1.5rem;
+	margin: 32px 0 12px;
+}
+.amarilla-post-content p {
+	margin: 0 0 1.25em;
+}
+.amarilla-post-content blockquote {
+	border-left: 3px solid var(--amarilla-yellow);
+	padding: 8px 0 8px 24px;
+	font-family: 'Fraunces', serif;
+	font-style: italic;
+	font-size: 1.25rem;
+	color: var(--amarilla-deep);
+	margin: 32px 0;
+}
+.amarilla-post-content img,
+.amarilla-post-content figure {
+	border-radius: 16px;
+	overflow: hidden;
+	margin: 32px 0;
+}
+.amarilla-post-content a {
+	color: var(--amarilla-deep);
+	text-decoration: underline;
+	text-decoration-color: var(--amarilla-yellow);
+	text-underline-offset: 3px;
+	text-decoration-thickness: 2px;
+}
+.amarilla-post-content a:hover {
+	text-decoration-color: var(--amarilla-coral);
+}
+
+/* --- Reading time --- */
+.amarilla-reading-time {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+/* --- Related posts --- */
+.amarilla-related-posts {
+	background: var(--amarilla-cream-soft);
+	padding: 80px 0;
+	border-top: 1px solid var(--amarilla-gray-line);
+}
+.amarilla-related-posts h2 {
+	font-family: 'Fraunces', serif;
+	font-size: clamp(1.75rem, 3vw, 2.25rem);
+	margin: 0 0 32px;
+	color: var(--amarilla-deep);
+}
+.amarilla-related-posts-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 32px;
+}
+.amarilla-post-card-link {
+	display: block;
+	color: inherit;
+	text-decoration: none;
+}
+.amarilla-post-card-image {
+	border-radius: 16px;
+	overflow: hidden;
+	margin-bottom: 12px;
+	aspect-ratio: 4 / 3;
+}
+.amarilla-post-card-image img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.5s ease;
+}
+.amarilla-post-card-link:hover .amarilla-post-card-image img {
+	transform: scale(1.04);
+}
+.amarilla-post-card-body .amarilla-post-card-cat {
+	color: var(--amarilla-coral);
+	font-weight: 600;
+	font-size: 12px;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	margin-bottom: 4px;
+}
+.amarilla-post-card-body h3 {
+	font-family: 'Fraunces', serif;
+	font-size: 1.25rem;
+	font-weight: 500;
+	margin: 4px 0 6px;
+	color: var(--amarilla-deep);
+	line-height: 1.2;
+}
+.amarilla-post-card-meta {
+	font-size: 13px;
+	color: var(--amarilla-gray-text);
+}
+
+/* =========================================================
+   7. RESPONZIVITA — v1.2.0 přírůstky
+   ========================================================= */
+@media (max-width: 1024px) {
+	.amarilla-locations-grid {
+		grid-template-columns: 1fr;
+	}
+	.amarilla-locations-map {
+		min-height: 380px;
+	}
+	.amarilla-blog-grid .wp-block-post-template {
+		grid-template-columns: 1fr 1fr;
+	}
+	.amarilla-related-posts-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	.amarilla-booking-widget-grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+@media (max-width: 640px) {
+	.amarilla-locations { padding: 60px 0; }
+	.amarilla-locations-grid { gap: 24px; }
+	.amarilla-locations-map { min-height: 320px; }
+	.amarilla-blog-header { padding: 60px 0 24px; }
+	.amarilla-blog-grid .wp-block-post-template,
+	.amarilla-related-posts-grid {
+		grid-template-columns: 1fr;
+	}
+	.amarilla-related-posts { padding: 60px 0; }
+	.amarilla-inquiry-grid--2 { grid-template-columns: 1fr; }
+	.amarilla-booking-widget-grid {
+		grid-template-columns: 1fr;
+		gap: 10px;
+	}
+	.amarilla-booking-widget { padding: 16px; }
+}

@@ -1,0 +1,49 @@
+<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","className":"amarilla-fleet"} -->
+<main class="wp-block-group amarilla-fleet">
+
+	<!-- wp:group {"layout":{"type":"constrained","contentSize":"1320px"}} -->
+	<div class="wp-block-group">
+
+		<!-- wp:html -->
+		<div class="amarilla-section-head">
+			<div>
+				<div class="amarilla-eyebrow">Vozový park</div>
+				<h1 style="font-size: clamp(48px, 6vw, 72px);">Auto pro každý<br>výlet po ostrově.</h1>
+			</div>
+			<p>Od úsporných hatchbacků do města po prostorná SUV pro výpravu k Teide. Všechna auta jsou pravidelně servisovaná a klimatizovaná.</p>
+		</div>
+		<!-- /wp:html -->
+
+		<!-- wp:query {"query":{"perPage":12,"pages":0,"offset":0,"postType":"vehicle","order":"asc","orderBy":"menu_order","inherit":false},"className":"amarilla-fleet-grid","layout":{"type":"default"}} -->
+		<div class="wp-block-query amarilla-fleet-grid">
+
+			<!-- wp:post-template -->
+				<!-- wp:html -->
+				[amarilla_vehicle_card_inline]
+				<!-- /wp:html -->
+			<!-- /wp:post-template -->
+
+			<!-- wp:query-no-results -->
+				<!-- wp:paragraph -->
+				<p>Vozový park bude brzy doplněn. Mezitím nás <a href="/kontakt/">kontaktujte</a> s vašim požadavkem.</p>
+				<!-- /wp:paragraph -->
+			<!-- /wp:query-no-results -->
+
+		</div>
+		<!-- /wp:query -->
+
+		<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"center"},"style":{"spacing":{"margin":{"top":"60px"}}}} -->
+			<!-- wp:query-pagination-previous /-->
+			<!-- wp:query-pagination-numbers /-->
+			<!-- wp:query-pagination-next /-->
+		<!-- /wp:query-pagination -->
+
+	</div>
+	<!-- /wp:group -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->

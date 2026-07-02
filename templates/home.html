@@ -1,0 +1,49 @@
+<!-- wp:template-part {"slug":"header","tagName":"header"} /-->
+
+<!-- wp:group {"tagName":"main","layout":{"type":"default"}} -->
+<main class="wp-block-group">
+
+	<!-- wp:shortcode -->
+	[amarilla_blog_header]
+	<!-- /wp:shortcode -->
+
+	<!-- wp:group {"align":"full","style":{"spacing":{"padding":{"top":"40px","bottom":"100px"}}},"layout":{"type":"constrained","contentSize":"1320px"}} -->
+	<div class="wp-block-group alignfull" style="padding-top:40px;padding-bottom:100px">
+
+		<!-- wp:query {"query":{"perPage":9,"pages":0,"offset":0,"postType":"post","order":"desc","orderBy":"date","inherit":false},"className":"amarilla-blog-grid","layout":{"type":"default"}} -->
+		<div class="wp-block-query amarilla-blog-grid">
+
+			<!-- wp:post-template {"className":"amarilla-blog-grid-inner","layout":{"type":"grid","columnCount":3}} -->
+				<!-- wp:group {"className":"amarilla-post-card-wrap","layout":{"type":"default"}} -->
+				<div class="wp-block-group amarilla-post-card-wrap">
+					<!-- wp:post-featured-image {"isLink":true,"aspectRatio":"4/3","style":{"border":{"radius":"16px"}}} /-->
+					<!-- wp:post-terms {"term":"category","style":{"typography":{"fontSize":"12px","textTransform":"uppercase","letterSpacing":"0.08em"}},"className":"amarilla-post-card-cat"} /-->
+					<!-- wp:post-title {"isLink":true,"level":3,"style":{"typography":{"fontSize":"1.5rem"},"spacing":{"margin":{"top":"8px","bottom":"8px"}}}} /-->
+					<!-- wp:post-excerpt {"moreText":"Číst dál"} /-->
+					<!-- wp:post-date {"style":{"typography":{"fontSize":"13px"},"color":{"text":"var:preset|color|gray-text"}}} /-->
+				</div>
+				<!-- /wp:group -->
+			<!-- /wp:post-template -->
+
+			<!-- wp:query-pagination {"layout":{"type":"flex","justifyContent":"center"},"style":{"spacing":{"margin":{"top":"60px"}}}} -->
+				<!-- wp:query-pagination-previous /-->
+				<!-- wp:query-pagination-numbers /-->
+				<!-- wp:query-pagination-next /-->
+			<!-- /wp:query-pagination -->
+
+			<!-- wp:query-no-results -->
+				<!-- wp:paragraph -->
+				<p>Žádné články zatím nejsou. První tipy z ostrova brzy přibudou.</p>
+				<!-- /wp:paragraph -->
+			<!-- /wp:query-no-results -->
+
+		</div>
+		<!-- /wp:query -->
+
+	</div>
+	<!-- /wp:group -->
+
+</main>
+<!-- /wp:group -->
+
+<!-- wp:template-part {"slug":"footer","tagName":"footer"} /-->
