@@ -243,6 +243,36 @@ function amarilla_sc_vehicle_card_inline() {
 add_shortcode( 'amarilla_vehicle_card_inline', 'amarilla_sc_vehicle_card_inline' );
 
 /**
+ * Umožní HTML bloku uvnitř Query Loopu přijímat aktuální postId.
+ */
+function amarilla_add_post_context_to_html_block( $args, $block_type ) {
+	$block_name = '';
+
+	if ( is_string( $block_type ) ) {
+		$block_name = $block_type;
+	} elseif ( is_object( $block_type ) && isset( $block_type->name ) ) {
+		$block_name = $block_type->name;
+	} elseif ( is_array( $block_type ) && isset( $block_type['name'] ) ) {
+		$block_name = $block_type['name'];
+	}
+
+	if ( 'core/html' !== $block_name || ! is_array( $args ) ) {
+		return $args;
+	}
+
+	if ( empty( $args['uses_context'] ) || ! is_array( $args['uses_context'] ) ) {
+		$args['uses_context'] = array();
+	}
+
+	if ( ! in_array( 'postId', $args['uses_context'], true ) ) {
+		$args['uses_context'][] = 'postId';
+	}
+
+	return $args;
+}
+add_filter( 'register_block_type_args', 'amarilla_add_post_context_to_html_block', 10, 2 );
+
+/**
  * V Query Loopu bere aktuální vozidlo z block contextu místo globálního $post.
  */
 function amarilla_render_vehicle_card_html_block( $block_content, $parsed_block, $block_instance = null ) {
