@@ -165,11 +165,13 @@ function amarilla_sc_vehicle_cta() {
 add_shortcode( 'amarilla_vehicle_cta', 'amarilla_sc_vehicle_cta' );
 
 /**
- * [amarilla_vehicle_card_inline] — karta vozidla pro archiv (uvnitř Query Loopu)
+ * Vykreslí kartu vozidla pro výpisy.
  */
-function amarilla_sc_vehicle_card_inline() {
-	$post_id = get_the_ID();
-	if ( ! $post_id || get_post_type( $post_id ) !== 'vehicle' ) {
+function amarilla_render_vehicle_card( int $post_id ): string {
+	$post_id = absint( $post_id );
+	$post    = $post_id ? get_post( $post_id ) : null;
+
+	if ( ! $post || $post->post_type !== 'vehicle' ) {
 		return '';
 	}
 
@@ -231,4 +233,29 @@ function amarilla_sc_vehicle_card_inline() {
 
 	return $html;
 }
+
+/**
+ * [amarilla_vehicle_card_inline] — karta vozidla pro archiv (uvnitř Query Loopu)
+ */
+function amarilla_sc_vehicle_card_inline() {
+	return amarilla_render_vehicle_card( (int) get_the_ID() );
+}
 add_shortcode( 'amarilla_vehicle_card_inline', 'amarilla_sc_vehicle_card_inline' );
+
+/**
+ * V Query Loopu bere aktuální vozidlo z block contextu místo globálního $post.
+ */
+function amarilla_render_vehicle_card_html_block( $block_content, $parsed_block, $block_instance = null ) {
+	if ( trim( $block_content ) !== '[amarilla_vehicle_card_inline]' ) {
+		return $block_content;
+	}
+
+	if ( ! is_object( $block_instance ) || empty( $block_instance->context['postId'] ) ) {
+		return $block_content;
+	}
+
+	$card = amarilla_render_vehicle_card( (int) $block_instance->context['postId'] );
+
+	return $card ? $card : $block_content;
+}
+add_filter( 'render_block_core/html', 'amarilla_render_vehicle_card_html_block', 10, 3 );
