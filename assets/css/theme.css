@@ -443,6 +443,25 @@ img { max-width: 100%; height: auto; }
 	grid-template-columns: repeat(3, 1fr);
 	gap: 24px;
 }
+.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid {
+	display: block;
+}
+.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 24px;
+	align-items: stretch;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template > li {
+	margin: 0;
+	min-width: 0;
+}
+.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template .vehicle-card-link {
+	height: 100%;
+}
 .amarilla-fleet-empty {
 	grid-column: 1 / -1;
 	text-align: center;
@@ -934,6 +953,9 @@ img { max-width: 100%; height: auto; }
 	.amarilla-tips-grid {
 		grid-template-columns: 1fr 1fr;
 	}
+	.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 	.amarilla-trust-grid {
 		grid-template-columns: 1fr 1fr;
 	}
@@ -957,6 +979,9 @@ img { max-width: 100%; height: auto; }
 	.amarilla-footer-grid,
 	.amarilla-trust-grid,
 	.amarilla-why-features {
+		grid-template-columns: 1fr;
+	}
+	.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template {
 		grid-template-columns: 1fr;
 	}
 	.vehicle-detail-specs { grid-template-columns: 1fr; }
