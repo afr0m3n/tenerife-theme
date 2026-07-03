@@ -202,6 +202,25 @@ function amarilla_get_pickup_location_options() {
  * plný formulář bez nutnosti POST/JS.
  */
 function amarilla_sc_booking_widget() {
+	$cf7_shortcode = amarilla_get_theme_mod( 'amarilla_home_booking_form_shortcode' );
+
+	if ( $cf7_shortcode && shortcode_exists( 'contact-form-7' ) ) {
+		$cf7_form = do_shortcode( $cf7_shortcode );
+
+		if ( trim( $cf7_form ) && trim( $cf7_form ) !== trim( $cf7_shortcode ) ) {
+			ob_start();
+			?>
+			<div class="amarilla-form-card amarilla-cf7-form amarilla-booking-form">
+				<?php
+				// Contact Form 7 vrací kompletní formulářový markup.
+				echo $cf7_form; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+				?>
+			</div>
+			<?php
+			return ob_get_clean();
+		}
+	}
+
 	$contact_url = amarilla_get_contact_url();
 	$locations   = amarilla_get_pickup_location_options();
 	$classes     = amarilla_get_vehicle_class_options();

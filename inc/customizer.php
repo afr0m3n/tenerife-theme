@@ -302,6 +302,17 @@ function amarilla_customize_register( $wp_customize ) {
 		'type'        => 'checkbox',
 	) );
 
+	$wp_customize->add_setting( 'amarilla_home_booking_form_shortcode', array(
+		'default'           => amarilla_get_theme_default( 'amarilla_home_booking_form_shortcode' ),
+		'sanitize_callback' => 'amarilla_sanitize_cf7_shortcode',
+	) );
+	$wp_customize->add_control( 'amarilla_home_booking_form_shortcode', array(
+		'label'       => __( 'Contact Form 7 shortcode pro hero formulář', 'amarilla' ),
+		'description' => __( 'Volitelné. Vložte shortcode, např. [contact-form-7 id="123" title="Poptávka vozu"]. Pokud zůstane prázdné nebo CF7 není aktivní, použije se výchozí formulář šablony.', 'amarilla' ),
+		'section'     => 'amarilla_hero',
+		'type'        => 'textarea',
+	) );
+
 	$wp_customize->add_setting( 'amarilla_hero_image', array(
 		'default'           => amarilla_get_theme_default( 'amarilla_hero_image' ),
 		'sanitize_callback' => 'esc_url_raw',
@@ -840,6 +851,96 @@ add_action( 'customize_register', 'amarilla_customize_register' );
  */
 function amarilla_sanitize_checkbox( $value ) {
 	return ( isset( $value ) && true === (bool) $value ) ? true : false;
+}
+
+/**
+ * Sanitizace jednoho Contact Form 7 shortcodu bez HTML.
+ */
+function amarilla_sanitize_cf7_shortcode( $value ) {
+	$value = trim( (string) $value );
+
+	if ( '' === $value || preg_match( '/[<>]/', $value ) ) {
+		return '';
+	}
+
+	$value = preg_replace( '/\s+/', ' ', $value );
+
+	if ( ! is_string( $value ) ) {
+		return '';
+	}
+
+	$value = trim( $value );
+
+	if ( '' === $value ) {
+		return '';
+	}
+
+	if ( ! preg_match( '/^\[contact-form-7(?P<attrs>(?:\s+[^\[\]<>]*)?)\]$/', $value, $matches ) ) {
+		return '';
+	}
+
+	$attrs_raw = isset( $matches['attrs'] ) ? trim( $matches['attrs'] ) : '';
+
+	if ( '' === $attrs_raw ) {
+		return '[contact-form-7]';
+	}
+
+	$attrs = shortcode_parse_atts( $attrs_raw );
+
+	if ( ! is_array( $attrs ) ) {
+		return '';
+	}
+
+	$allowed_attrs = array( 'id', 'title', 'html_id', 'html_class' );
+	$clean_attrs   = array();
+
+	foreach ( $attrs as $name => $attr_value ) {
+		if ( ! is_string( $name ) ) {
+			return '';
+		}
+
+		$name = strtolower( $name );
+
+		if ( ! in_array( $name, $allowed_attrs, true ) ) {
+			return '';
+		}
+
+		$attr_value = sanitize_text_field( (string) $attr_value );
+
+		if ( '' === $attr_value ) {
+			continue;
+		}
+
+		if ( 'id' === $name && ! preg_match( '/^[A-Za-z0-9_-]+$/', $attr_value ) ) {
+			return '';
+		}
+
+		if ( 'html_id' === $name ) {
+			$attr_value = sanitize_html_class( $attr_value );
+		}
+
+		if ( 'html_class' === $name ) {
+			$classes = array_filter( array_map( 'sanitize_html_class', preg_split( '/\s+/', $attr_value ) ) );
+
+			if ( empty( $classes ) ) {
+				continue;
+			}
+
+			$attr_value = implode( ' ', $classes );
+		}
+
+		$clean_attrs[ $name ] = $attr_value;
+	}
+
+	$shortcode = '[contact-form-7';
+
+	foreach ( $allowed_attrs as $name ) {
+		if ( isset( $clean_attrs[ $name ] ) ) {
+			$shortcode .= sprintf( ' %s="%s"', $name, esc_attr( $clean_attrs[ $name ] ) );
+		}
+	}
+
+	return $shortcode . ']';
 }
 
 /**

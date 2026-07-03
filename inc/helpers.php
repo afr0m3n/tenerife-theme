@@ -50,6 +50,7 @@ function amarilla_get_theme_defaults() {
 		'amarilla_hero_btn2_text'    => 'Jak to funguje',
 		'amarilla_hero_btn2_url'     => '/kontakt/',
 		'amarilla_hero_show_booking' => true,
+		'amarilla_home_booking_form_shortcode' => '',
 		'amarilla_hero_image'        => 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=900&q=80',
 		'amarilla_hero_badge'        => 'K vyzvednutí dnes',
 		'amarilla_hero_stat_value'   => 'od 25 €',

@@ -83,36 +83,64 @@ Vozidla v přehledu se řadí podle pole **Pořadí** (Page Attributes). Najdete
 
 ## Kontaktní formulář
 
-Doporučujeme **Contact Form 7** (zdarma):
+Doporučujeme **Contact Form 7** (zdarma). Theme neukládá ID formuláře natvrdo,
+protože se může lišit mezi DEV a produkcí.
 
 1. **Pluginy → Přidat nový** → vyhledejte "Contact Form 7" → Instalovat → Aktivovat
-2. **Kontakt → Kontaktní formuláře → Add New**
-3. Použijte tuto šablonu (zkopírujte do pole "Form"):
+2. **Kontakt → Kontaktní formuláře → Přidat nový**
+3. Pro homepage použijte tuto šablonu (zkopírujte do pole **Form**):
 
 ```
-<label>Vaše jméno *
-[text* your-name] </label>
+<div class="amarilla-form-grid amarilla-form-grid--two-columns">
+  <label class="amarilla-field">
+    <span>Vaše jméno</span>
+    [text* your-name class:amarilla-input]
+  </label>
 
-<label>E-mail *
-[email* your-email] </label>
+  <label class="amarilla-field">
+    <span>Kontakt na Vás</span>
+    [text* your-contact class:amarilla-input placeholder "Telefon/e-mail"]
+  </label>
 
-<label>Telefon
-[tel your-phone] </label>
+  <label class="amarilla-field">
+    <span>Datum od</span>
+    [date* date-from class:amarilla-input]
+  </label>
 
-<label>Termín pronájmu (od – do)
-[text your-dates] </label>
+  <label class="amarilla-field">
+    <span>Datum do</span>
+    [date* date-to class:amarilla-input]
+  </label>
+</div>
 
-<label>Vozidlo (pokud máte na mysli konkrétní)
-[text vehicle] </label>
-
-<label>Zpráva
-[textarea your-message] </label>
-
-[submit "Odeslat poptávku"]
+<div class="amarilla-form-actions">
+  [submit class:amarilla-submit "Odeslat poptávku"]
+  <p class="amarilla-form-note">Žádná blokace karty.</p>
+</div>
 ```
 
-4. Šablona automaticky předvyplní pole "vehicle", pokud uživatel přijde z detailu konkrétního vozu (přes URL parametr `?vehicle=Fiat Panda`)
-5. Vložte shortcode formuláře `[contact-form-7 id="XXX"]` do stránky **Kontakt** v editoru
+4. V záložce **Mail** použijte jako tělo zprávy například:
+
+```
+Nová poptávka z webu Amarilla Tenerife
+
+Jméno: [your-name]
+Kontakt: [your-contact]
+
+Datum od: [date-from]
+Datum do: [date-to]
+```
+
+5. Pro homepage vložte shortcode formuláře do **Customizer → Amarilla → Hero → Contact Form 7 shortcode pro hero formulář**, například `[contact-form-7 id="123" title="Poptávka vozu" html_class="amarilla-form-card amarilla-cf7-form amarilla-booking-form"]`.
+6. Pro další stránky obalte CF7 shortcode wrapperem s třídami `amarilla-form-card amarilla-cf7-form`, pokud má použít stejný styl:
+
+```
+<div class="amarilla-form-card amarilla-cf7-form">
+  [contact-form-7 id="123" title="Poptávka vozu"]
+</div>
+```
+
+7. Šablona automaticky předvyplní pole `vehicle`, pokud uživatel přijde z detailu konkrétního vozu přes URL parametr `?vehicle=Fiat Panda`.
 
 ## Customizer (Vzhled → Customizovat)
 
@@ -191,10 +219,12 @@ a kritické tváře jsou preloadované přes `<link rel="preload">` v `<head>`.
 Celková velikost ~270 KB, načítá se jen co je potřeba (přes `unicode-range`).
 
 ### Poptávkový / rezervační formulář
-Plně funkční tok bez externího pluginu:
+Plně funkční tok ve výchozím stavu bez externího pluginu. Homepage widget lze
+volitelně nahradit Contact Form 7 shortcodem přes Customizer:
 
 1. **V hero** je teď compact widget (4 pole: datum vyzvednutí → vrácení → místo
    → třída vozu). Lze vypnout v *Customizer → Hero → Zobrazit poptávkový widget*.
+   Pokud je nastaven CF7 shortcode, zobrazí se místo výchozího widgetu.
 2. **Na /kontakt/** je velký formulář (jméno, e-mail, telefon, věk řidiče,
    poznámka, GDPR souhlas). Hero widget jeho hodnoty předvyplní.
 3. **U každého vozu** je tlačítko *Poptat tento vůz* — předvyplní jméno vozu

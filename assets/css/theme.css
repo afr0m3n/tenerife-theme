@@ -1017,12 +1017,16 @@ img { max-width: 100%; height: auto; }
 }
 
 /* --- Booking widget (compact, in hero) --- */
+.amarilla-form-card,
 .amarilla-booking-widget {
 	background: var(--amarilla-cream-soft);
 	border: 1px solid var(--amarilla-gray-line);
 	border-radius: var(--amarilla-radius);
 	padding: 20px;
 	box-shadow: var(--amarilla-shadow);
+}
+.amarilla-booking-form,
+.amarilla-booking-widget {
 	margin-top: 28px;
 }
 .amarilla-booking-widget-grid {
@@ -1080,6 +1084,180 @@ img { max-width: 100%; height: auto; }
 	font-size: 12px;
 	color: var(--amarilla-gray-text);
 	text-align: center;
+}
+
+/* --- Contact Form 7 styling support --- */
+.amarilla-cf7-form .wpcf7 {
+	margin: 0;
+}
+.amarilla-cf7-form .wpcf7-form {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin: 0;
+}
+.amarilla-cf7-form p {
+	margin: 0;
+}
+.amarilla-cf7-form .amarilla-form-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+.amarilla-cf7-form.amarilla-booking-form .amarilla-form-grid {
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.amarilla-cf7-form.amarilla-booking-form .amarilla-form-grid--two-columns,
+.amarilla-cf7-form .amarilla-form-grid--two-columns {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 12px;
+}
+.amarilla-cf7-form .amarilla-form-grid--contact {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.amarilla-cf7-form .amarilla-field {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	gap: 4px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--amarilla-gray-text);
+}
+.amarilla-cf7-form .wpcf7-form-control-wrap {
+	display: block;
+	width: 100%;
+}
+.amarilla-cf7-form input[type=text],
+.amarilla-cf7-form input[type=email],
+.amarilla-cf7-form input[type=tel],
+.amarilla-cf7-form input[type=url],
+.amarilla-cf7-form input[type=date],
+.amarilla-cf7-form input[type=number],
+.amarilla-cf7-form select,
+.amarilla-cf7-form textarea,
+.amarilla-cf7-form .amarilla-input,
+.amarilla-cf7-form .amarilla-select,
+.amarilla-cf7-form .amarilla-textarea {
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 400;
+	color: var(--amarilla-deep);
+	background: #fff;
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: 10px;
+	padding: 10px 12px;
+	width: 100%;
+	box-sizing: border-box;
+	transition: border-color var(--amarilla-transition), box-shadow var(--amarilla-transition);
+}
+.amarilla-cf7-form select,
+.amarilla-cf7-form .amarilla-select {
+	-webkit-appearance: none;
+	appearance: none;
+	background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%230F2A3D' stroke-width='2.5'><polyline points='6,9 12,15 18,9'/></svg>");
+	background-repeat: no-repeat;
+	background-position: right 10px center;
+	padding-right: 32px;
+}
+.amarilla-cf7-form textarea,
+.amarilla-cf7-form .amarilla-textarea {
+	min-height: 96px;
+	resize: vertical;
+}
+.amarilla-cf7-form input:focus,
+.amarilla-cf7-form select:focus,
+.amarilla-cf7-form textarea:focus {
+	outline: 0;
+	border-color: var(--amarilla-yellow);
+	box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.18);
+}
+.amarilla-cf7-form .wpcf7-not-valid {
+	border-color: var(--amarilla-coral) !important;
+}
+.amarilla-cf7-form .wpcf7-not-valid-tip {
+	margin-top: 5px;
+	color: #8c3d27;
+	font-size: 12px;
+	font-weight: 500;
+	text-transform: none;
+}
+.amarilla-cf7-form input[type=checkbox],
+.amarilla-cf7-form input[type=radio] {
+	accent-color: var(--amarilla-yellow);
+}
+.amarilla-cf7-form .wpcf7-list-item {
+	margin-left: 0;
+}
+.amarilla-cf7-form .amarilla-form-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 8px;
+}
+.amarilla-cf7-form.amarilla-booking-form .amarilla-form-actions {
+	margin-top: 12px;
+}
+.amarilla-cf7-form .amarilla-submit,
+.amarilla-cf7-form input[type=submit] {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	min-height: 44px;
+	font-family: inherit;
+	font-size: 14px;
+	font-weight: 700;
+	color: var(--amarilla-deep);
+	background: var(--amarilla-yellow);
+	border: 0;
+	border-radius: 999px;
+	padding: 12px 20px;
+	cursor: pointer;
+	transition: transform var(--amarilla-transition), box-shadow var(--amarilla-transition), background-color var(--amarilla-transition);
+}
+.amarilla-cf7-form .amarilla-submit:hover,
+.amarilla-cf7-form input[type=submit]:hover {
+	background: #ffd55a;
+	box-shadow: 0 10px 24px rgba(15, 42, 61, 0.14);
+	transform: translateY(-1px);
+}
+.amarilla-cf7-form .wpcf7-spinner {
+	display: block;
+	margin: 8px auto 0;
+}
+.amarilla-cf7-form .wpcf7 form .wpcf7-response-output {
+	margin: 0;
+	padding: 12px 14px;
+	border: 1px solid var(--amarilla-gray-line);
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.45;
+}
+.amarilla-cf7-form .wpcf7 form.invalid .wpcf7-response-output,
+.amarilla-cf7-form .wpcf7 form.unaccepted .wpcf7-response-output,
+.amarilla-cf7-form .wpcf7 form.failed .wpcf7-response-output,
+.amarilla-cf7-form .wpcf7 form.aborted .wpcf7-response-output,
+.amarilla-cf7-form .wpcf7 form.spam .wpcf7-response-output {
+	background: rgba(224, 120, 86, 0.12);
+	border-color: var(--amarilla-coral);
+	color: #8c3d27;
+}
+.amarilla-cf7-form .wpcf7 form.sent .wpcf7-response-output {
+	background: rgba(49, 148, 117, 0.12);
+	border-color: #319475;
+	color: #1f6f56;
+}
+.amarilla-cf7-form .amarilla-form-note {
+	margin: 0;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.4;
+	text-align: center;
+	text-transform: none;
+	color: var(--amarilla-gray-text);
 }
 
 /* --- Inquiry form (full, on /kontakt/) --- */
@@ -1528,6 +1706,11 @@ img { max-width: 100%; height: auto; }
 	.amarilla-related-posts-grid {
 		grid-template-columns: 1fr 1fr;
 	}
+	.amarilla-cf7-form.amarilla-booking-form .amarilla-form-grid,
+	.amarilla-cf7-form.amarilla-booking-form .amarilla-form-grid--two-columns,
+	.amarilla-cf7-form .amarilla-form-grid--contact {
+		grid-template-columns: 1fr 1fr;
+	}
 	.amarilla-booking-widget-grid {
 		grid-template-columns: 1fr 1fr;
 	}
@@ -1543,9 +1726,19 @@ img { max-width: 100%; height: auto; }
 	}
 	.amarilla-related-posts { padding: 60px 0; }
 	.amarilla-inquiry-grid--2 { grid-template-columns: 1fr; }
+	.amarilla-cf7-form .amarilla-form-grid,
+	.amarilla-cf7-form.amarilla-booking-form .amarilla-form-grid,
+	.amarilla-cf7-form.amarilla-booking-form .amarilla-form-grid--two-columns,
+	.amarilla-cf7-form .amarilla-form-grid--two-columns,
+	.amarilla-cf7-form .amarilla-form-grid--contact {
+		grid-template-columns: 1fr;
+	}
 	.amarilla-booking-widget-grid {
 		grid-template-columns: 1fr;
 		gap: 10px;
 	}
-	.amarilla-booking-widget { padding: 16px; }
+	.amarilla-form-card,
+	.amarilla-booking-widget {
+		padding: 16px;
+	}
 }
