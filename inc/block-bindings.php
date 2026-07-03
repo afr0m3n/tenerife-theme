@@ -243,49 +243,27 @@ function amarilla_sc_vehicle_card_inline() {
 add_shortcode( 'amarilla_vehicle_card_inline', 'amarilla_sc_vehicle_card_inline' );
 
 /**
- * Umožní HTML bloku uvnitř Query Loopu přijímat aktuální postId.
+ * Registruje dynamický blok karty vozidla pro Query Loop.
  */
-function amarilla_add_post_context_to_html_block( $args, $block_type ) {
-	$block_name = '';
-
-	if ( is_string( $block_type ) ) {
-		$block_name = $block_type;
-	} elseif ( is_object( $block_type ) && isset( $block_type->name ) ) {
-		$block_name = $block_type->name;
-	} elseif ( is_array( $block_type ) && isset( $block_type['name'] ) ) {
-		$block_name = $block_type['name'];
-	}
-
-	if ( 'core/html' !== $block_name || ! is_array( $args ) ) {
-		return $args;
-	}
-
-	if ( empty( $args['uses_context'] ) || ! is_array( $args['uses_context'] ) ) {
-		$args['uses_context'] = array();
-	}
-
-	if ( ! in_array( 'postId', $args['uses_context'], true ) ) {
-		$args['uses_context'][] = 'postId';
-	}
-
-	return $args;
+function amarilla_register_vehicle_card_block(): void {
+	register_block_type(
+		'amarilla/vehicle-card',
+		array(
+			'api_version'     => 2,
+			'uses_context'    => array( 'postId' ),
+			'render_callback' => 'amarilla_render_vehicle_card_block',
+		)
+	);
 }
-add_filter( 'register_block_type_args', 'amarilla_add_post_context_to_html_block', 10, 2 );
+add_action( 'init', 'amarilla_register_vehicle_card_block' );
 
 /**
- * V Query Loopu bere aktuální vozidlo z block contextu místo globálního $post.
+ * Vykreslí kartu vozidla z aktuální položky Query Loopu.
  */
-function amarilla_render_vehicle_card_html_block( $block_content, $parsed_block, $block_instance = null ) {
-	if ( trim( $block_content ) !== '[amarilla_vehicle_card_inline]' ) {
-		return $block_content;
+function amarilla_render_vehicle_card_block( $attributes, $content, $block ): string {
+	if ( ! is_object( $block ) || empty( $block->context['postId'] ) ) {
+		return '';
 	}
 
-	if ( ! is_object( $block_instance ) || empty( $block_instance->context['postId'] ) ) {
-		return $block_content;
-	}
-
-	$card = amarilla_render_vehicle_card( (int) $block_instance->context['postId'] );
-
-	return $card ? $card : $block_content;
+	return amarilla_render_vehicle_card( (int) $block->context['postId'] );
 }
-add_filter( 'render_block_core/html', 'amarilla_render_vehicle_card_html_block', 10, 3 );
