@@ -38,6 +38,42 @@
 			});
 		}
 
+		/* --- Kompaktní jazykový přepínač na mobilu --- */
+		document.querySelectorAll('.amarilla-lang-switcher').forEach(function (switcher) {
+			var langToggle = switcher.querySelector('.amarilla-lang-toggle');
+			var langLinks = switcher.querySelectorAll('.lang-link');
+
+			if (!langToggle) return;
+
+			function setLanguageMenuState(isOpen) {
+				switcher.classList.toggle('is-open', isOpen);
+				langToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+			}
+
+			langToggle.addEventListener('click', function (event) {
+				event.stopPropagation();
+				setLanguageMenuState(!switcher.classList.contains('is-open'));
+			});
+
+			langLinks.forEach(function (link) {
+				link.addEventListener('click', function () {
+					setLanguageMenuState(false);
+				});
+			});
+
+			document.addEventListener('click', function (event) {
+				if (!switcher.contains(event.target)) {
+					setLanguageMenuState(false);
+				}
+			});
+
+			document.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape') {
+					setLanguageMenuState(false);
+				}
+			});
+		});
+
 		/* --- Smooth scroll pro interní odkazy --- */
 		document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
 			anchor.addEventListener('click', function (e) {

@@ -40,6 +40,73 @@ function amarilla_register_polylang_strings() {
 add_action( 'init', 'amarilla_register_polylang_strings', 20 );
 
 /**
+ * Vykresli sdílený markup jazykového přepínače.
+ *
+ * Desktop používá plný seznam odkazů, mobil kompaktní tlačítko
+ * se stejnými odkazy v rozbalovacím seznamu.
+ *
+ * @param array $languages Pole jazyků z Polylangu nebo fallback.
+ * @return string
+ */
+function amarilla_render_language_switcher( $languages ) {
+	$current_label = '';
+
+	foreach ( $languages as $lang ) {
+		$slug = isset( $lang['slug'] ) ? (string) $lang['slug'] : '';
+		if ( '' === $slug ) {
+			continue;
+		}
+
+		$label = strtoupper( $slug );
+		if ( '' === $current_label || ! empty( $lang['current_lang'] ) ) {
+			$current_label = $label;
+		}
+	}
+
+	if ( '' === $current_label ) {
+		$current_label = 'CZ';
+	}
+
+	$output  = sprintf(
+		'<nav class="amarilla-lang-switcher" aria-label="%s">',
+		esc_attr__( 'Výběr jazyka', 'amarilla' )
+	);
+	$output .= '<div class="amarilla-lang-mobile">';
+	$output .= sprintf(
+		'<button type="button" class="amarilla-lang-toggle" aria-expanded="false" aria-label="%s"><span class="amarilla-lang-current">%s</span></button>',
+		esc_attr__( 'Vybrat jazyk', 'amarilla' ),
+		esc_html( $current_label )
+	);
+	$output .= '</div>';
+	$output .= '<div class="amarilla-lang-list">';
+
+	foreach ( $languages as $lang ) {
+		$slug = isset( $lang['slug'] ) ? (string) $lang['slug'] : '';
+		if ( '' === $slug ) {
+			continue;
+		}
+
+		$active       = ! empty( $lang['current_lang'] ) ? ' active' : '';
+		$aria_current = ! empty( $lang['current_lang'] ) ? ' aria-current="true"' : '';
+		$url          = isset( $lang['url'] ) ? $lang['url'] : '#';
+
+		$output .= sprintf(
+			'<a href="%s" class="lang-link%s" hreflang="%s"%s>%s</a>',
+			esc_url( $url ),
+			esc_attr( $active ),
+			esc_attr( $slug ),
+			$aria_current,
+			esc_html( strtoupper( $slug ) )
+		);
+	}
+
+	$output .= '</div>';
+	$output .= '</nav>';
+
+	return $output;
+}
+
+/**
  * Přepínač jazyků pro hlavičku — vrací HTML s vlajkami/zkratkami
  *
  * Pokud Polylang není aktivní, vrátí prázdný string a v šabloně
@@ -61,20 +128,7 @@ function amarilla_language_switcher() {
 		return '';
 	}
 
-	$output = '<div class="amarilla-lang-switcher">';
-	foreach ( $languages as $lang ) {
-		$active = ! empty( $lang['current_lang'] ) ? ' active' : '';
-		$output .= sprintf(
-			'<a href="%s" class="lang-link%s" hreflang="%s">%s</a>',
-			esc_url( $lang['url'] ),
-			esc_attr( $active ),
-			esc_attr( $lang['slug'] ),
-			esc_html( strtoupper( $lang['slug'] ) )
-		);
-	}
-	$output .= '</div>';
-
-	return $output;
+	return amarilla_render_language_switcher( $languages );
 }
 
 /**
@@ -84,13 +138,31 @@ function amarilla_language_switcher_shortcode() {
 	$switcher = amarilla_language_switcher();
 
 	if ( empty( $switcher ) ) {
-		// Fallback bez Polylangu — statické zkratky
-		return '<div class="amarilla-lang-switcher">
-			<a href="#" class="lang-link active">CZ</a>
-			<a href="#" class="lang-link">EN</a>
-			<a href="#" class="lang-link">ES</a>
-			<a href="#" class="lang-link">DE</a>
-		</div>';
+		// Fallback bez Polylangu — statické zkratky.
+		return amarilla_render_language_switcher(
+			array(
+				array(
+					'slug'         => 'cz',
+					'url'          => '#',
+					'current_lang' => true,
+				),
+				array(
+					'slug'         => 'en',
+					'url'          => '#',
+					'current_lang' => false,
+				),
+				array(
+					'slug'         => 'es',
+					'url'          => '#',
+					'current_lang' => false,
+				),
+				array(
+					'slug'         => 'de',
+					'url'          => '#',
+					'current_lang' => false,
+				),
+			)
+		);
 	}
 
 	return $switcher;
