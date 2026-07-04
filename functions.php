@@ -114,6 +114,10 @@ require_once AMARILLA_DIR . '/inc/locations.php';            // NEW v1.2.0
 require_once AMARILLA_DIR . '/inc/blog.php';                 // NEW v1.2.0
 require_once AMARILLA_DIR . '/inc/polylang-compat.php';
 
+if ( is_admin() ) {
+	require_once AMARILLA_DIR . '/inc/admin-vehicle-duplicate.php';
+}
+
 /**
  * Registrace block patterns kategorií
  */
