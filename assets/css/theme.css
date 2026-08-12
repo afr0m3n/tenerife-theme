@@ -536,15 +536,16 @@ img { max-width: 100%; height: auto; }
 	box-shadow: var(--amarilla-shadow);
 }
 .vehicle-card-image {
-	aspect-ratio: 16/11;
-	background: linear-gradient(135deg, #e8dfc6 0%, #c4b596 100%);
+	aspect-ratio: 4/3;
+	background: var(--amarilla-cream-soft);
 	position: relative;
 	overflow: hidden;
 }
 .vehicle-card-image img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
+	object-fit: contain;
+	display: block;
 }
 .vehicle-card-tag {
 	position: absolute;
@@ -790,20 +791,123 @@ img { max-width: 100%; height: auto; }
 	gap: 60px;
 	align-items: start;
 }
-.vehicle-detail-gallery {
-	border-radius: var(--amarilla-radius);
-	overflow: hidden;
-	aspect-ratio: 4/3;
-	background: linear-gradient(135deg, #e8dfc6 0%, #c4b596 100%);
+.vehicle-detail-media {
+	display: grid;
+	place-items: center;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	overflow: visible;
+	background: transparent;
+	box-shadow: none;
 }
-.vehicle-detail-gallery img {
+.vehicle-detail-media img {
+	display: block;
+	width: auto;
+	max-width: 100%;
+	height: auto;
+	max-height: min(75vh, 760px);
+	max-height: min(75dvh, 760px);
+	aspect-ratio: auto;
+	object-fit: contain;
+	object-position: center;
+	border-radius: var(--amarilla-radius);
+}
+.vehicle-detail-media-placeholder {
 	width: 100%;
-	height: 100%;
-	object-fit: cover;
+	height: clamp(280px, 42vw, 560px);
+	border-radius: var(--amarilla-radius);
+	background: linear-gradient(135deg, #e8dfc6 0%, #c4b596 100%);
 }
 .vehicle-detail-info h1 {
 	font-size: clamp(40px, 5vw, 56px);
 	margin-bottom: 12px;
+}
+.vehicle-detail-content:empty {
+	display: none;
+}
+.vehicle-detail-more {
+	margin-top: 72px;
+}
+.vehicle-detail-gallery-head {
+	margin-bottom: 28px;
+}
+.vehicle-detail-gallery-head h2 {
+	font-size: clamp(34px, 4vw, 48px);
+	margin: 6px 0 0;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images {
+	--vehicle-gallery-row-height: 220px;
+	display: flex;
+	flex-flow: row wrap;
+	align-items: flex-start;
+	width: 100%;
+	gap: 10px;
+	margin: 0;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images::after {
+	content: "";
+	flex: 6 1 0;
+	height: 0;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image) {
+	--vehicle-image-ratio: 1;
+	display: flex;
+	flex: var(--vehicle-image-ratio) 1 calc(var(--vehicle-image-ratio) * var(--vehicle-gallery-row-height));
+	flex-direction: column;
+	width: auto;
+	min-width: 0;
+	max-width: 100%;
+	margin: 0;
+	aspect-ratio: auto;
+	border-radius: 0;
+	overflow: visible;
+	background: transparent;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image) > a,
+.vehicle-detail-more .wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image) > div {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images figure.wp-block-image:not(#individual-image) img {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	height: auto;
+	max-height: none;
+	aspect-ratio: auto;
+	object-fit: contain;
+	object-position: center;
+	border-radius: var(--amarilla-radius);
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images figure.wp-block-image:has(figcaption)::before {
+	content: none;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images figure.wp-block-image figcaption {
+	position: static;
+	max-height: none;
+	margin: 0;
+	padding: 8px 6px 2px;
+	overflow: visible;
+	color: var(--amarilla-gray-text);
+	background: none;
+	text-shadow: none;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:only-of-type {
+	--vehicle-gallery-row-height: 360px;
+}
+.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:first-of-type:nth-last-of-type(2),
+.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:first-of-type:nth-last-of-type(2) ~ figure.wp-block-image {
+	--vehicle-gallery-row-height: 300px;
+}
+.vehicle-detail-more .wp-block-gallery .lightbox-trigger {
+	cursor: zoom-in;
+}
+.single-vehicle .wp-lightbox-overlay .wp-block-image img {
+	aspect-ratio: auto !important;
+	object-fit: contain !important;
+	object-position: center !important;
 }
 .vehicle-detail-tagline {
 	color: var(--amarilla-gray-text);
@@ -998,6 +1102,16 @@ img { max-width: 100%; height: auto; }
 	.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
+	.vehicle-detail-more .wp-block-gallery.has-nested-images {
+		--vehicle-gallery-row-height: 180px;
+	}
+	.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:only-of-type {
+		--vehicle-gallery-row-height: 320px;
+	}
+	.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:first-of-type:nth-last-of-type(2),
+	.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:first-of-type:nth-last-of-type(2) ~ figure.wp-block-image {
+		--vehicle-gallery-row-height: 240px;
+	}
 	.amarilla-trust-grid {
 		grid-template-columns: 1fr 1fr;
 	}
@@ -1025,6 +1139,19 @@ img { max-width: 100%; height: auto; }
 	}
 	.post-type-archive-vehicle .wp-block-query.amarilla-fleet-grid .wp-block-post-template {
 		grid-template-columns: 1fr;
+	}
+	.vehicle-detail-more {
+		margin-top: 52px;
+	}
+	.vehicle-detail-more .wp-block-gallery.has-nested-images {
+		--vehicle-gallery-row-height: 125px;
+		gap: 8px;
+	}
+	.vehicle-detail-more .wp-block-gallery.has-nested-images > figure.wp-block-image:only-of-type {
+		--vehicle-gallery-row-height: 280px;
+	}
+	.vehicle-detail-more .wp-block-gallery.has-nested-images:has(> figure.wp-block-image:first-of-type:nth-last-of-type(2))::after {
+		flex-grow: 0;
 	}
 	.vehicle-detail-specs { grid-template-columns: 1fr; }
 	.amarilla-topbar { font-size: 12px; }

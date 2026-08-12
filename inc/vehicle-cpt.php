@@ -49,6 +49,21 @@ function amarilla_register_vehicle_cpt() {
 		'menu_icon'          => 'dashicons-car',
 		'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'page-attributes', 'custom-fields' ),
 		'taxonomies'         => array( 'vehicle_category' ),
+		'template'           => array(
+			array(
+				'core/gallery',
+				array(
+					'className'   => 'amarilla-vehicle-gallery',
+					'columns'     => 3,
+					'imageCrop'   => false,
+					'fixedHeight' => false,
+					'aspectRatio' => 'auto',
+					'linkTo'      => 'none',
+					'sizeSlug'    => 'large',
+				),
+			),
+		),
+		'template_lock'      => false,
 	);
 
 	register_post_type( 'vehicle', $args );

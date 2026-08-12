@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AMARILLA_VERSION', '1.2.0' );
+define( 'AMARILLA_VERSION', '1.2.1' );
 define( 'AMARILLA_DIR', get_template_directory() );
 define( 'AMARILLA_URI', get_template_directory_uri() );
 
@@ -77,6 +77,16 @@ function amarilla_enqueue_assets() {
 		AMARILLA_VERSION,
 		array( 'in_footer' => true, 'strategy' => 'defer' )
 	);
+
+	if ( is_singular( 'vehicle' ) ) {
+		wp_enqueue_script(
+			'amarilla-vehicle-gallery',
+			AMARILLA_URI . '/assets/js/vehicle-gallery.js',
+			array(),
+			AMARILLA_VERSION,
+			array( 'in_footer' => true, 'strategy' => 'defer' )
+		);
+	}
 }
 add_action( 'wp_enqueue_scripts', 'amarilla_enqueue_assets' );
 

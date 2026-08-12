@@ -19,9 +19,17 @@ function amarilla_sc_vehicle_image() {
 		return '';
 	}
 	if ( has_post_thumbnail( $post_id ) ) {
-		return get_the_post_thumbnail( $post_id, 'amarilla-vehicle-detail', array( 'loading' => 'lazy' ) );
+		return get_the_post_thumbnail(
+			$post_id,
+			'large',
+			array(
+				'loading'  => 'lazy',
+				'decoding' => 'async',
+				'sizes'    => '(max-width: 1024px) calc(100vw - 40px), min(55vw, 760px)',
+			)
+		);
 	}
-	return '<div style="width:100%;height:100%;background:linear-gradient(135deg,#e8dfc6,#c4b596);"></div>';
+	return '<div class="vehicle-detail-media-placeholder" aria-hidden="true"></div>';
 }
 add_shortcode( 'amarilla_vehicle_image', 'amarilla_sc_vehicle_image' );
 
@@ -131,10 +139,178 @@ function amarilla_sc_vehicle_content() {
 	if ( ! $post_id ) {
 		return '';
 	}
-	$post = get_post( $post_id );
-	return apply_filters( 'the_content', $post->post_content );
+
+	$parts = amarilla_get_vehicle_content_parts( $post_id );
+	if ( $parts['content'] === '' ) {
+		return '';
+	}
+
+	return apply_filters( 'the_content', $parts['content'] );
 }
 add_shortcode( 'amarilla_vehicle_content', 'amarilla_sc_vehicle_content' );
+
+/**
+ * Zjistí, zda má Image blok vlastní odkaz, který musí zůstat zachovaný.
+ *
+ * @param array<string,mixed> $block Image blok.
+ * @return bool
+ */
+function amarilla_vehicle_image_has_custom_link( $block ) {
+	$attrs = isset( $block['attrs'] ) && is_array( $block['attrs'] ) ? $block['attrs'] : array();
+
+	return ! empty( $attrs['href'] )
+		|| ( array_key_exists( 'linkDestination', $attrs ) && 'none' !== $attrs['linkDestination'] )
+		|| ( ! empty( $block['innerHTML'] ) && preg_match( '/<a\b[^>]*\bhref\s*=/i', $block['innerHTML'] ) );
+}
+
+/**
+ * Rozdělí pouze top-level obsah vozidla na běžný obsah a core galerie.
+ *
+ * @param int $post_id ID vozidla.
+ * @return array{content:string,gallery:string}
+ */
+function amarilla_get_vehicle_content_parts( $post_id ) {
+	static $cache = array();
+
+	$post_id = absint( $post_id );
+	if ( isset( $cache[ $post_id ] ) ) {
+		return $cache[ $post_id ];
+	}
+
+	$post = $post_id ? get_post( $post_id ) : null;
+	if ( ! $post || 'vehicle' !== $post->post_type ) {
+		return array( 'content' => '', 'gallery' => '' );
+	}
+
+	$content_blocks    = array();
+	$gallery_blocks    = array();
+	$standalone_images = array();
+	$featured_id       = get_post_thumbnail_id( $post_id );
+	$seen_ids          = array();
+
+	$prepare_image = static function ( $image ) use ( $featured_id, &$seen_ids ) {
+		$image_id = ! empty( $image['attrs']['id'] ) ? absint( $image['attrs']['id'] ) : 0;
+		if ( $image_id && ( $image_id === $featured_id || isset( $seen_ids[ $image_id ] ) ) ) {
+			return null;
+		}
+		if ( $image_id ) {
+			$seen_ids[ $image_id ] = true;
+		}
+
+		if ( ! amarilla_vehicle_image_has_custom_link( $image ) ) {
+			$image['attrs'] = isset( $image['attrs'] ) && is_array( $image['attrs'] ) ? $image['attrs'] : array();
+			$image['attrs']['lightbox'] = isset( $image['attrs']['lightbox'] ) && is_array( $image['attrs']['lightbox'] ) ? $image['attrs']['lightbox'] : array();
+			$image['attrs']['lightbox']['enabled'] = true;
+			$image['attrs']['linkDestination']      = 'none';
+		}
+
+		return $image;
+	};
+
+	foreach ( parse_blocks( $post->post_content ) as $block ) {
+		if ( 'core/image' === $block['blockName'] ) {
+			if ( amarilla_vehicle_image_has_custom_link( $block ) ) {
+				$content_blocks[] = $block;
+				continue;
+			}
+
+			$image = $prepare_image( $block );
+			if ( $image ) {
+				$standalone_images[] = $image;
+			}
+			continue;
+		}
+
+		if ( 'core/gallery' !== $block['blockName'] ) {
+			$content_blocks[] = $block;
+			continue;
+		}
+
+		$children    = array();
+		$child_map   = array();
+		$image_count = 0;
+		foreach ( $block['innerBlocks'] as $index => $child ) {
+			$prepared = 'core/image' === $child['blockName'] ? $prepare_image( $child ) : $child;
+			$child_map[ $index ] = null !== $prepared;
+			if ( null !== $prepared ) {
+				$children[] = $prepared;
+				$image_count += 'core/image' === $child['blockName'] ? 1 : 0;
+			}
+		}
+
+		if ( $image_count || $children ) {
+			$inner_content = array();
+			$child_index   = 0;
+			foreach ( $block['innerContent'] as $chunk ) {
+				if ( null !== $chunk || ! empty( $child_map[ $child_index ] ) ) {
+					$inner_content[] = $chunk;
+				}
+				$child_index += null === $chunk ? 1 : 0;
+			}
+			$block['innerBlocks']  = $children;
+			$block['innerContent'] = $inner_content;
+			if ( $image_count ) {
+				$gallery_blocks[] = $block;
+			} else {
+				$content_blocks[] = $block;
+			}
+		}
+	}
+
+	if ( $standalone_images ) {
+		$inner_content = array( '<figure class="wp-block-gallery has-nested-images columns-3 vehicle-detail-thumbnails">' );
+		$inner_content = array_merge( $inner_content, array_fill( 0, count( $standalone_images ), null ), array( '</figure>' ) );
+		array_unshift(
+			$gallery_blocks,
+			array(
+				'blockName'    => 'core/gallery',
+				'attrs'        => array(
+					'columns'     => 3,
+					'imageCrop'   => false,
+					'fixedHeight' => false,
+					'aspectRatio' => 'auto',
+					'linkTo'      => 'none',
+					'className'   => 'vehicle-detail-thumbnails',
+				),
+				'innerBlocks'  => $standalone_images,
+				'innerHTML'    => '',
+				'innerContent' => $inner_content,
+			)
+		);
+	}
+
+	$cache[ $post_id ] = array(
+		'content' => trim( serialize_blocks( $content_blocks ) ),
+		'gallery' => trim( serialize_blocks( $gallery_blocks ) ),
+	);
+
+	return $cache[ $post_id ];
+}
+
+/**
+ * [amarilla_vehicle_gallery] — samostatná galerie dalších fotografií.
+ */
+function amarilla_sc_vehicle_gallery() {
+	$post_id = get_the_ID();
+	if ( ! $post_id || 'vehicle' !== get_post_type( $post_id ) ) {
+		return '';
+	}
+
+	$gallery = amarilla_get_vehicle_content_parts( $post_id )['gallery'];
+	if ( '' === $gallery ) {
+		return '';
+	}
+
+	$heading_id = 'vehicle-gallery-title-' . $post_id;
+	return sprintf(
+		'<section class="vehicle-detail-more" aria-labelledby="%1$s"><div class="vehicle-detail-gallery-head"><div class="amarilla-eyebrow">%2$s</div><h2 id="%1$s">%3$s</h2></div>%4$s</section>',
+		esc_attr( $heading_id ),
+		esc_html__( 'Galerie vozidla', 'amarilla' ),
+		esc_html__( 'Další fotografie', 'amarilla' ),
+		do_blocks( $gallery )
+	);
+}
+add_shortcode( 'amarilla_vehicle_gallery', 'amarilla_sc_vehicle_gallery' );
 
 /**
  * [amarilla_vehicle_cta] — tlačítko pro poptávku s předvyplněným vozem
@@ -199,7 +375,15 @@ function amarilla_render_vehicle_card( int $post_id ): string {
 	$category = $cats && ! is_wp_error( $cats ) ? $cats[0]->name : '';
 	$tag_class = $label ? 'popular' : '';
 	$display_label = $label ? $label : $category;
-	$thumb = has_post_thumbnail( $post_id ) ? get_the_post_thumbnail( $post_id, 'amarilla-vehicle-card', array( 'loading' => 'lazy' ) ) : '';
+	$thumb = has_post_thumbnail( $post_id ) ? get_the_post_thumbnail(
+		$post_id,
+		'large',
+		array(
+			'loading'  => 'lazy',
+			'decoding' => 'async',
+			'sizes'    => '(max-width: 640px) calc(100vw - 40px), (max-width: 1024px) calc(50vw - 44px), 424px',
+		)
+	) : '';
 
 	$html = '<a href="' . esc_url( get_permalink( $post_id ) ) . '" class="vehicle-card-link" style="text-decoration:none;color:inherit;">';
 	$html .= '<div class="vehicle-card">';
