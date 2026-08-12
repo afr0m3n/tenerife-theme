@@ -201,8 +201,8 @@ if [[ "$MODE" == "apply" ]]; then
     read -r -p "To confirm destructive deploy, type DELETE $REMOTE_THEME_SLUG: " CONFIRM
     [[ "$CONFIRM" == "DELETE $REMOTE_THEME_SLUG" ]] || die "Confirmation failed"
   else
-    read -r -p "To confirm production deploy, type DEPLOY $REMOTE_THEME_SLUG: " CONFIRM
-    [[ "$CONFIRM" == "DEPLOY $REMOTE_THEME_SLUG" ]] || die "Confirmation failed"
+    read -r -p "To confirm production deploy, type DEPLOY: " CONFIRM
+    [[ "$CONFIRM" == "DEPLOY" ]] || die "Confirmation failed"
   fi
 
   if [[ "$BACKUP_BEFORE_APPLY" -eq 1 ]]; then
