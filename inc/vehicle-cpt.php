@@ -71,6 +71,38 @@ function amarilla_register_vehicle_cpt() {
 add_action( 'init', 'amarilla_register_vehicle_cpt' );
 
 /**
+ * Zobrazí na hlavním archivu celý vozový park bez stránkování.
+ *
+ * Query Loop neumí hodnotu perPage -1 (převádí ji přes absint), proto se
+ * neomezený počet nastavuje až ve výsledných argumentech jeho WP_Query.
+ */
+function amarilla_vehicle_archive_query_loop_args( $query, $block ) {
+	if ( is_admin() || ! is_post_type_archive( 'vehicle' ) || ! is_object( $block ) ) {
+		return $query;
+	}
+
+	$block_query = isset( $block->context['query'] ) && is_array( $block->context['query'] )
+		? $block->context['query']
+		: array();
+	$class_name  = isset( $block->parsed_block['attrs']['className'] )
+		&& is_string( $block->parsed_block['attrs']['className'] )
+		? $block->parsed_block['attrs']['className']
+		: '';
+
+	if (
+		'vehicle' !== ( $block_query['postType'] ?? '' )
+		|| ! preg_match( '/(?:^|\s)amarilla-fleet-grid(?:\s|$)/', $class_name )
+	) {
+		return $query;
+	}
+
+	$query['posts_per_page'] = -1;
+
+	return $query;
+}
+add_filter( 'query_loop_block_query_vars', 'amarilla_vehicle_archive_query_loop_args', 10, 2 );
+
+/**
  * Registrace taxonomie Kategorie vozidla
  */
 function amarilla_register_vehicle_taxonomy() {

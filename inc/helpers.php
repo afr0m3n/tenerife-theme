@@ -450,7 +450,7 @@ function amarilla_get_vehicle_schema_node( $post_id ) {
  * Vrátí ItemList všech vozidel — vhodné pro hlavní stránku
  * a archiv vozového parku.
  */
-function amarilla_get_vehicle_itemlist_node( $limit = 12 ) {
+function amarilla_get_vehicle_itemlist_node( $limit = -1 ) {
 	$query = new WP_Query( array(
 		'post_type'      => 'vehicle',
 		'posts_per_page' => $limit,
@@ -605,7 +605,7 @@ function amarilla_output_schema() {
 	} elseif ( is_singular( 'vehicle' ) ) {
 		$graph[] = amarilla_get_vehicle_schema_node( get_the_ID() );
 	} elseif ( is_post_type_archive( 'vehicle' ) ) {
-		$list = amarilla_get_vehicle_itemlist_node( 24 );
+		$list = amarilla_get_vehicle_itemlist_node();
 		if ( $list ) {
 			$graph[] = $list;
 		}
