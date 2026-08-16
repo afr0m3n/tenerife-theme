@@ -173,6 +173,8 @@ function amarilla_copy_vehicle_meta( $source_id, $new_id ) {
 		'_wp_trash_meta_status',
 		'_wp_trash_meta_time',
 		'_wp_desired_post_slug',
+		'_amarilla_home_featured',
+		'_amarilla_home_featured_order',
 	);
 
 	$all_meta = get_post_meta( $source_id );

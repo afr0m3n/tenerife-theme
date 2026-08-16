@@ -116,6 +116,7 @@ add_action( 'wp_head', 'amarilla_preload_fonts', 2 );
 require_once AMARILLA_DIR . '/inc/vehicle-cpt.php';
 require_once AMARILLA_DIR . '/inc/seasonal-pricing.php';     // NEW v1.2.0
 require_once AMARILLA_DIR . '/inc/block-bindings.php';
+require_once AMARILLA_DIR . '/inc/featured-vehicles.php';
 require_once AMARILLA_DIR . '/inc/helpers.php';
 require_once AMARILLA_DIR . '/inc/customizer.php';
 require_once AMARILLA_DIR . '/inc/content-shortcodes.php';

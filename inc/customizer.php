@@ -984,7 +984,7 @@ function amarilla_customize_render_trust_strip() {
  * Selective refresh callback: sekce Vozový park.
  */
 function amarilla_customize_render_fleet() {
-	return amarilla_customize_render_pattern( 'fleet-grid.php' );
+	return do_blocks( amarilla_customize_render_pattern( 'fleet-grid.php' ) );
 }
 
 /**

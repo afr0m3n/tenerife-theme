@@ -447,8 +447,43 @@ function amarilla_get_vehicle_schema_node( $post_id ) {
 }
 
 /**
- * Vrátí ItemList všech vozidel — vhodné pro hlavní stránku
- * a archiv vozového parku.
+ * Sestaví ItemList z vozidel v přesně zadaném pořadí.
+ *
+ * @param int[] $post_ids ID vozidel.
+ * @return array<string,mixed>|null
+ */
+function amarilla_get_vehicle_itemlist_node_for_ids( array $post_ids ) {
+	$items = array();
+	foreach ( array_values( array_unique( array_map( 'absint', $post_ids ) ) ) as $post_id ) {
+		if ( ! $post_id || 'vehicle' !== get_post_type( $post_id ) || 'publish' !== get_post_status( $post_id ) ) {
+			continue;
+		}
+
+		$items[] = array(
+			'@type'    => 'ListItem',
+			'position' => count( $items ) + 1,
+			'url'      => get_permalink( $post_id ),
+			'name'     => get_the_title( $post_id ),
+		);
+	}
+
+	if ( ! $items ) {
+		return null;
+	}
+
+	return array(
+		'@type'           => 'ItemList',
+		'name'            => __( 'Vozový park', 'amarilla' ),
+		'numberOfItems'   => count( $items ),
+		'itemListElement' => $items,
+	);
+}
+
+/**
+ * Vrátí ItemList publikovaných vozidel pro archiv vozového parku.
+ *
+ * @param int $limit Maximální počet vozidel, -1 znamená bez omezení.
+ * @return array<string,mixed>|null
  */
 function amarilla_get_vehicle_itemlist_node( $limit = -1 ) {
 	$query = new WP_Query( array(
@@ -460,28 +495,7 @@ function amarilla_get_vehicle_itemlist_node( $limit = -1 ) {
 		'no_found_rows'  => true,
 	) );
 
-	if ( ! $query->have_posts() ) {
-		return null;
-	}
-
-	$items = array();
-	$i = 1;
-	foreach ( $query->posts as $p ) {
-		$items[] = array(
-			'@type'    => 'ListItem',
-			'position' => $i++,
-			'url'      => get_permalink( $p->ID ),
-			'name'     => get_the_title( $p->ID ),
-		);
-	}
-	wp_reset_postdata();
-
-	return array(
-		'@type'           => 'ItemList',
-		'name'            => __( 'Vozový park', 'amarilla' ),
-		'numberOfItems'   => count( $items ),
-		'itemListElement' => $items,
-	);
+	return amarilla_get_vehicle_itemlist_node_for_ids( wp_list_pluck( $query->posts, 'ID' ) );
 }
 
 /**
@@ -598,7 +612,7 @@ function amarilla_output_schema() {
 
 	// Stránka-specifické nody
 	if ( is_front_page() ) {
-		$list = amarilla_get_vehicle_itemlist_node( 12 );
+		$list = amarilla_get_vehicle_itemlist_node_for_ids( amarilla_get_home_featured_vehicle_ids( 3 ) );
 		if ( $list ) {
 			$graph[] = $list;
 		}
