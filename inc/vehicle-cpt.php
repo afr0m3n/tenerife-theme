@@ -77,22 +77,15 @@ add_action( 'init', 'amarilla_register_vehicle_cpt' );
  * neomezený počet nastavuje až ve výsledných argumentech jeho WP_Query.
  */
 function amarilla_vehicle_archive_query_loop_args( $query, $block ) {
-	if ( is_admin() || ! is_post_type_archive( 'vehicle' ) || ! is_object( $block ) ) {
+	if ( is_admin() || is_tax() || ! is_post_type_archive( 'vehicle' ) || ! is_object( $block ) ) {
 		return $query;
 	}
 
 	$block_query = isset( $block->context['query'] ) && is_array( $block->context['query'] )
 		? $block->context['query']
 		: array();
-	$class_name  = isset( $block->parsed_block['attrs']['className'] )
-		&& is_string( $block->parsed_block['attrs']['className'] )
-		? $block->parsed_block['attrs']['className']
-		: '';
 
-	if (
-		'vehicle' !== ( $block_query['postType'] ?? '' )
-		|| ! preg_match( '/(?:^|\s)amarilla-fleet-grid(?:\s|$)/', $class_name )
-	) {
+	if ( 'vehicle' !== ( $block_query['postType'] ?? '' ) ) {
 		return $query;
 	}
 
