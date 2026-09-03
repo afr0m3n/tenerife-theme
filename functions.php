@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'AMARILLA_VERSION', '1.2.1' );
+define( 'AMARILLA_VERSION', '1.2.2' );
 define( 'AMARILLA_DIR', get_template_directory() );
 define( 'AMARILLA_URI', get_template_directory_uri() );
 
@@ -121,6 +121,7 @@ require_once AMARILLA_DIR . '/inc/helpers.php';
 require_once AMARILLA_DIR . '/inc/customizer.php';
 require_once AMARILLA_DIR . '/inc/content-shortcodes.php';
 require_once AMARILLA_DIR . '/inc/inquiry-form.php';         // NEW v1.2.0
+require_once AMARILLA_DIR . '/inc/vehicle-inquiry-cf7.php';
 require_once AMARILLA_DIR . '/inc/locations.php';            // NEW v1.2.0
 require_once AMARILLA_DIR . '/inc/blog.php';                 // NEW v1.2.0
 require_once AMARILLA_DIR . '/inc/polylang-compat.php';

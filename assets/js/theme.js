@@ -2,7 +2,7 @@
  * Amarilla Tenerife — frontend JavaScript
  *
  * Zajišťuje:
- * - Předvyplnění poptávkového formuláře jménem vozu (z URL parametru)
+ * - Synchronizaci převodovek s vozidlem v poptávkovém CF7 formuláři
  * - Smooth scroll pro kotvy
  * - Mobilní menu toggle
  */
@@ -11,22 +11,62 @@
 	'use strict';
 
 	document.addEventListener('DOMContentLoaded', function () {
+		/* --- Převodovky podle vybraného vozu (Contact Form 7) --- */
+		document.querySelectorAll('.wpcf7 form').forEach(function (form) {
+			var vehicleSelect = form.querySelector('select[name="select-auto"]');
+			var transmissionSelect = form.querySelector('select[name="transmission"]');
+			var dataElement = form.querySelector('.amarilla-vehicle-transmission-data');
 
-		/* --- Předvyplnění poptávkového formuláře (Contact Form 7) --- */
-		var urlParams = new URLSearchParams(window.location.search);
-		var vehicle = urlParams.get('vehicle');
-		if (vehicle) {
-			var fields = document.querySelectorAll('input[name="vehicle"], input[name="vozidlo"], input[name="your-vehicle"]');
-			fields.forEach(function (field) {
-				field.value = decodeURIComponent(vehicle);
-			});
-
-			// Zvýraznění předmětu v message poli, pokud existuje
-			var subjectField = document.querySelector('input[name="your-subject"], input[name="subject"]');
-			if (subjectField && !subjectField.value) {
-				subjectField.value = 'Poptávka: ' + decodeURIComponent(vehicle);
+			if (!vehicleSelect || !transmissionSelect || !dataElement || vehicleSelect.dataset.amarillaTransmissionBound) {
+				return;
 			}
-		}
+
+			var data;
+			try {
+				data = JSON.parse(dataElement.textContent);
+			} catch (error) {
+				return;
+			}
+
+			if (!data || !data.vehicles || !data.labels) {
+				return;
+			}
+
+			function getTransmissionChoices() {
+				var available = data.vehicles[vehicleSelect.value];
+
+				if (Array.isArray(available) && available.length === 1 && data.labels[available[0]]) {
+					return [data.labels[available[0]]];
+				}
+
+				return [data.labels.any, data.labels.manual, data.labels.automatic];
+			}
+
+			function updateTransmissionChoices() {
+				var currentValue = transmissionSelect.value;
+				var choices = getTransmissionChoices();
+
+				while (transmissionSelect.firstChild) {
+					transmissionSelect.removeChild(transmissionSelect.firstChild);
+				}
+
+				choices.forEach(function (choice) {
+					var option = document.createElement('option');
+					option.value = choice;
+					option.textContent = choice;
+					transmissionSelect.appendChild(option);
+				});
+
+				transmissionSelect.value = choices.indexOf(currentValue) !== -1 ? currentValue : choices[0];
+			}
+
+			vehicleSelect.dataset.amarillaTransmissionBound = '1';
+			vehicleSelect.addEventListener('change', updateTransmissionChoices);
+			form.addEventListener('reset', function () {
+				window.setTimeout(updateTransmissionChoices, 0);
+			});
+			updateTransmissionChoices();
+		});
 
 		/* --- Mobilní menu toggle --- */
 		var menuToggle = document.querySelector('.amarilla-menu-toggle');

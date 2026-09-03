@@ -85,15 +85,11 @@ function amarilla_sc_vehicle_specs_grid() {
 
 	$seats   = (int) get_post_meta( $post_id, '_vehicle_seats', true );
 	$doors   = (int) get_post_meta( $post_id, '_vehicle_doors', true );
-	$trans   = get_post_meta( $post_id, '_vehicle_transmission', true );
+	$trans   = amarilla_get_vehicle_transmissions_label( $post_id );
 	$fuel    = get_post_meta( $post_id, '_vehicle_fuel', true );
 	$luggage = get_post_meta( $post_id, '_vehicle_luggage', true );
 	$ac      = get_post_meta( $post_id, '_vehicle_ac', true );
 
-	$trans_labels = array(
-		'manual'    => __( 'Manuál', 'amarilla' ),
-		'automatic' => __( 'Automat', 'amarilla' ),
-	);
 	$fuel_labels = array(
 		'petrol'   => __( 'Benzín', 'amarilla' ),
 		'diesel'   => __( 'Nafta', 'amarilla' ),
@@ -104,8 +100,8 @@ function amarilla_sc_vehicle_specs_grid() {
 	$rows = array();
 	if ( $seats )   { $rows[] = array( __( 'Počet míst', 'amarilla' ), $seats ); }
 	if ( $doors )   { $rows[] = array( __( 'Počet dveří', 'amarilla' ), $doors ); }
-	if ( $trans && isset( $trans_labels[ $trans ] ) ) {
-		$rows[] = array( __( 'Převodovka', 'amarilla' ), $trans_labels[ $trans ] );
+	if ( $trans ) {
+		$rows[] = array( __( 'Převodovka', 'amarilla' ), $trans );
 	}
 	if ( $fuel && isset( $fuel_labels[ $fuel ] ) ) {
 		$rows[] = array( __( 'Palivo', 'amarilla' ), $fuel_labels[ $fuel ] );
@@ -320,17 +316,7 @@ function amarilla_sc_vehicle_cta() {
 	if ( ! $post_id ) {
 		return '';
 	}
-	$title = get_the_title( $post_id );
-	$contact_url = amarilla_get_contact_url();
-	$args = array( 'vehicle' => rawurlencode( $title ) );
-
-	// Předvyplnění třídy vozu z taxonomie
-	$cats = get_the_terms( $post_id, 'vehicle_category' );
-	if ( $cats && ! is_wp_error( $cats ) ) {
-		$args['vehicle_class'] = $cats[0]->slug;
-	}
-
-	$url = add_query_arg( $args, $contact_url );
+	$url = add_query_arg( 'requested_vehicle', $post_id, amarilla_get_inquiry_url() );
 
 	return sprintf(
 		'<a href="%s" class="amarilla-btn amarilla-btn--primary">%s <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:14px;height:14px;"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>',
@@ -355,7 +341,7 @@ function amarilla_render_vehicle_card( int $post_id ): string {
 	$label   = get_post_meta( $post_id, '_vehicle_label', true );
 	$seats   = (int) get_post_meta( $post_id, '_vehicle_seats', true );
 	$doors   = (int) get_post_meta( $post_id, '_vehicle_doors', true );
-	$trans   = get_post_meta( $post_id, '_vehicle_transmission', true );
+	$trans   = amarilla_get_vehicle_transmissions_label( $post_id );
 	$price   = get_post_meta( $post_id, '_vehicle_price', true );
 
 	// V1.2: pokud existují sezónní období s nižší cenou než základní,
@@ -402,7 +388,7 @@ function amarilla_render_vehicle_card( int $post_id ): string {
 		$html .= '<span class="vehicle-spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a8.38 8.38 0 0113 0"/></svg>' . sprintf( _n( '%d osoba', '%d osob', $seats, 'amarilla' ), $seats ) . '</span>';
 	}
 	if ( $trans ) {
-		$html .= '<span class="vehicle-spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>' . ( $trans === 'manual' ? esc_html__( 'Manuál', 'amarilla' ) : esc_html__( 'Automat', 'amarilla' ) ) . '</span>';
+		$html .= '<span class="vehicle-spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>' . esc_html( $trans ) . '</span>';
 	}
 	if ( $doors ) {
 		$html .= '<span class="vehicle-spec"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M7 8h10M7 16h10"/></svg>' . sprintf( _n( '%d dveře', '%d dveří', $doors, 'amarilla' ), $doors ) . '</span>';

@@ -189,6 +189,28 @@ function amarilla_get_contact_url() {
 }
 
 /**
+ * URL na stránku nezávazné poptávky.
+ */
+function amarilla_get_inquiry_url() {
+	$inquiry_page = get_page_by_path( 'nezavazna-poptavka' );
+
+	if ( $inquiry_page ) {
+		if ( function_exists( 'pll_get_post' ) ) {
+			$translated_id = pll_get_post( $inquiry_page->ID );
+			if ( $translated_id ) {
+				$inquiry_page = get_post( $translated_id );
+			}
+		}
+
+		if ( $inquiry_page ) {
+			return get_permalink( $inquiry_page );
+		}
+	}
+
+	return home_url( '/nezavazna-poptavka/' );
+}
+
+/**
  * URL na stránku vozového parku
  */
 function amarilla_get_fleet_url() {
@@ -369,7 +391,7 @@ function amarilla_get_vehicle_schema_node( $post_id ) {
 	$additional = array();
 	$seats = (int) get_post_meta( $post_id, '_vehicle_seats', true );
 	$doors = (int) get_post_meta( $post_id, '_vehicle_doors', true );
-	$trans = get_post_meta( $post_id, '_vehicle_transmission', true );
+	$trans = amarilla_get_vehicle_transmissions_label( $post_id, ', ' );
 	$fuel  = get_post_meta( $post_id, '_vehicle_fuel', true );
 
 	if ( $seats ) {
@@ -390,7 +412,7 @@ function amarilla_get_vehicle_schema_node( $post_id ) {
 		$additional[] = array(
 			'@type' => 'PropertyValue',
 			'name'  => __( 'Transmission', 'amarilla' ),
-			'value' => $trans === 'manual' ? 'Manual' : 'Automatic',
+			'value' => $trans,
 		);
 	}
 	if ( $fuel ) {

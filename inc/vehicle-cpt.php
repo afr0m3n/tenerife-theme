@@ -142,6 +142,66 @@ function amarilla_register_vehicle_taxonomy() {
 add_action( 'init', 'amarilla_register_vehicle_taxonomy' );
 
 /**
+ * Sanitizuje seznam dostupných převodovek vozidla.
+ *
+ * @param mixed $transmissions Hodnota meta pole.
+ * @return array
+ */
+function amarilla_sanitize_vehicle_transmissions( $transmissions ) {
+	$allowed = array( 'manual', 'automatic' );
+	$values  = is_array( $transmissions ) ? array_map( 'sanitize_key', $transmissions ) : array();
+
+	return array_values( array_intersect( $allowed, $values ) );
+}
+
+/**
+ * Vrátí dostupné převodovky vozidla včetně fallbacku na původní single meta.
+ *
+ * Existence nové meta je kontrolována zvlášť, aby šlo uložit i záměrně prázdný
+ * seznam a ten nebyl přepsán historickou hodnotou.
+ *
+ * @param int $post_id ID vozidla.
+ * @return array
+ */
+function amarilla_get_vehicle_transmissions( $post_id ) {
+	$post_id = absint( $post_id );
+	if ( ! $post_id ) {
+		return array();
+	}
+
+	if ( metadata_exists( 'post', $post_id, '_vehicle_transmissions' ) ) {
+		return amarilla_sanitize_vehicle_transmissions( get_post_meta( $post_id, '_vehicle_transmissions', true ) );
+	}
+
+	$legacy = sanitize_key( get_post_meta( $post_id, '_vehicle_transmission', true ) );
+
+	return in_array( $legacy, array( 'manual', 'automatic' ), true ) ? array( $legacy ) : array();
+}
+
+/**
+ * Vrátí přeložený popisek dostupných převodovek vozidla.
+ *
+ * @param int    $post_id  ID vozidla.
+ * @param string $separator Oddělovač více hodnot.
+ * @return string
+ */
+function amarilla_get_vehicle_transmissions_label( $post_id, $separator = ' / ' ) {
+	$labels = array(
+		'manual'    => __( 'Manuál', 'amarilla' ),
+		'automatic' => __( 'Automat', 'amarilla' ),
+	);
+	$values = array();
+
+	foreach ( amarilla_get_vehicle_transmissions( $post_id ) as $transmission ) {
+		if ( isset( $labels[ $transmission ] ) ) {
+			$values[] = $labels[ $transmission ];
+		}
+	}
+
+	return implode( $separator, $values );
+}
+
+/**
  * Registrace meta polí pro vozidlo (REST API ready, kompatibilní s block bindings)
  */
 function amarilla_register_vehicle_meta() {
@@ -177,6 +237,29 @@ function amarilla_register_vehicle_meta() {
 			},
 		) );
 	}
+
+	register_post_meta(
+		'vehicle',
+		'_vehicle_transmissions',
+		array(
+			'show_in_rest'      => array(
+				'schema' => array(
+					'type'  => 'array',
+					'items' => array(
+						'type' => 'string',
+						'enum' => array( 'manual', 'automatic' ),
+					),
+				),
+			),
+			'single'            => true,
+			'type'              => 'array',
+			'description'       => __( 'Dostupné převodovky', 'amarilla' ),
+			'sanitize_callback' => 'amarilla_sanitize_vehicle_transmissions',
+			'auth_callback'     => function() {
+				return current_user_can( 'edit_posts' );
+			},
+		)
+	);
 }
 add_action( 'init', 'amarilla_register_vehicle_meta' );
 
@@ -201,17 +284,17 @@ add_action( 'add_meta_boxes', 'amarilla_add_vehicle_meta_box' );
 function amarilla_render_vehicle_meta_box( $post ) {
 	wp_nonce_field( 'amarilla_save_vehicle_meta', 'amarilla_vehicle_nonce' );
 
-	$seats        = get_post_meta( $post->ID, '_vehicle_seats', true );
-	$doors        = get_post_meta( $post->ID, '_vehicle_doors', true );
-	$transmission = get_post_meta( $post->ID, '_vehicle_transmission', true );
-	$fuel         = get_post_meta( $post->ID, '_vehicle_fuel', true );
-	$luggage      = get_post_meta( $post->ID, '_vehicle_luggage', true );
-	$ac           = get_post_meta( $post->ID, '_vehicle_ac', true );
-	$price        = get_post_meta( $post->ID, '_vehicle_price', true );
-	$tagline      = get_post_meta( $post->ID, '_vehicle_tagline', true );
-	$label        = get_post_meta( $post->ID, '_vehicle_label', true );
-	$rating       = get_post_meta( $post->ID, '_vehicle_rating', true );
-	$rating_count = get_post_meta( $post->ID, '_vehicle_rating_count', true );
+	$seats         = get_post_meta( $post->ID, '_vehicle_seats', true );
+	$doors         = get_post_meta( $post->ID, '_vehicle_doors', true );
+	$transmissions = amarilla_get_vehicle_transmissions( $post->ID );
+	$fuel          = get_post_meta( $post->ID, '_vehicle_fuel', true );
+	$luggage       = get_post_meta( $post->ID, '_vehicle_luggage', true );
+	$ac            = get_post_meta( $post->ID, '_vehicle_ac', true );
+	$price         = get_post_meta( $post->ID, '_vehicle_price', true );
+	$tagline       = get_post_meta( $post->ID, '_vehicle_tagline', true );
+	$label         = get_post_meta( $post->ID, '_vehicle_label', true );
+	$rating        = get_post_meta( $post->ID, '_vehicle_rating', true );
+	$rating_count  = get_post_meta( $post->ID, '_vehicle_rating_count', true );
 	?>
 	<style>
 		.amarilla-meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -237,12 +320,15 @@ function amarilla_render_vehicle_meta_box( $post ) {
 		</div>
 
 		<div>
-			<label for="vehicle_transmission"><?php _e( 'Převodovka', 'amarilla' ); ?></label>
-			<select id="vehicle_transmission" name="vehicle_transmission">
-				<option value=""><?php _e( '— vyberte —', 'amarilla' ); ?></option>
-				<option value="manual" <?php selected( $transmission, 'manual' ); ?>><?php _e( 'Manuál', 'amarilla' ); ?></option>
-				<option value="automatic" <?php selected( $transmission, 'automatic' ); ?>><?php _e( 'Automat', 'amarilla' ); ?></option>
-			</select>
+			<label><?php _e( 'Dostupné převodovky', 'amarilla' ); ?></label>
+			<label for="vehicle_transmission_manual" style="font-weight:400;">
+				<input type="checkbox" id="vehicle_transmission_manual" name="vehicle_transmissions[]" value="manual" <?php checked( in_array( 'manual', $transmissions, true ) ); ?>>
+				<?php _e( 'Manuál', 'amarilla' ); ?>
+			</label>
+			<label for="vehicle_transmission_automatic" style="font-weight:400;">
+				<input type="checkbox" id="vehicle_transmission_automatic" name="vehicle_transmissions[]" value="automatic" <?php checked( in_array( 'automatic', $transmissions, true ) ); ?>>
+				<?php _e( 'Automat', 'amarilla' ); ?>
+			</label>
 		</div>
 
 		<div>
@@ -307,6 +393,10 @@ function amarilla_save_vehicle_meta( $post_id ) {
 		return;
 	}
 
+	if ( wp_is_post_autosave( $post_id ) || wp_is_post_revision( $post_id ) ) {
+		return;
+	}
+
 	if ( ! current_user_can( 'edit_post', $post_id ) ) {
 		return;
 	}
@@ -314,7 +404,6 @@ function amarilla_save_vehicle_meta( $post_id ) {
 	$fields = array(
 		'vehicle_seats'        => array( 'meta' => '_vehicle_seats',        'sanitize' => 'absint' ),
 		'vehicle_doors'        => array( 'meta' => '_vehicle_doors',        'sanitize' => 'absint' ),
-		'vehicle_transmission' => array( 'meta' => '_vehicle_transmission', 'sanitize' => 'sanitize_text_field' ),
 		'vehicle_fuel'         => array( 'meta' => '_vehicle_fuel',         'sanitize' => 'sanitize_text_field' ),
 		'vehicle_luggage'      => array( 'meta' => '_vehicle_luggage',      'sanitize' => 'sanitize_text_field' ),
 		'vehicle_ac'           => array( 'meta' => '_vehicle_ac',           'sanitize' => 'sanitize_text_field' ),
@@ -331,6 +420,13 @@ function amarilla_save_vehicle_meta( $post_id ) {
 			update_post_meta( $post_id, $config['meta'], $value );
 		}
 	}
+
+	$transmissions = isset( $_POST['vehicle_transmissions'] )
+		? amarilla_sanitize_vehicle_transmissions( wp_unslash( $_POST['vehicle_transmissions'] ) )
+		: array();
+
+	update_post_meta( $post_id, '_vehicle_transmissions', $transmissions );
+	delete_post_meta( $post_id, '_vehicle_transmission' );
 }
 add_action( 'save_post_vehicle', 'amarilla_save_vehicle_meta' );
 

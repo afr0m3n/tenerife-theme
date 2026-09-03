@@ -140,7 +140,7 @@ Datum do: [date-to]
 </div>
 ```
 
-7. Šablona automaticky předvyplní pole `vehicle`, pokud uživatel přijde z detailu konkrétního vozu přes URL parametr `?vehicle=Fiat Panda`.
+7. CTA na detailu vozu používá bezpečný parametr `?requested_vehicle=<ID>`. Na samostatném CF7 formuláři „Nezávazná poptávka“ šablona server-side naplní existující select `select-auto` publikovanými vozidly, předvybere odpovídající model a synchronizuje pole `transmission` podle metadat vozu.
 
 ## Customizer (Vzhled → Customizovat)
 

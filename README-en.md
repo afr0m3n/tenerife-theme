@@ -111,7 +111,7 @@ We recommend **Contact Form 7** (free):
 [submit "Send inquiry"]
 ```
 
-4. The theme automatically pre-fills the "vehicle" field if the visitor arrives from a specific vehicle's detail page (via `?vehicle=Fiat Panda` URL parameter)
+4. The vehicle detail CTA uses the safe `?requested_vehicle=<ID>` parameter. In the dedicated “Nezávazná poptávka” CF7 form, the theme fills the existing `select-auto` select from published vehicles, preselects the matching model, and synchronizes the `transmission` field from vehicle metadata.
 5. Insert the form shortcode `[contact-form-7 id="XXX"]` into the **Contact** page editor
 
 ## Customizer (Appearance → Customize)
