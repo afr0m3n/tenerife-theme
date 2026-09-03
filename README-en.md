@@ -1,191 +1,343 @@
-# Amarilla Tenerife — WordPress Theme
+# Amarilla Tenerife
 
-A modern block theme for Amarilla Car Hire, a car rental company in Tenerife. Built for WordPress 6.4+, PHP 8.0+, and ready for the Polylang plugin for multilingual content.
+A custom WordPress block theme for the Amarilla Car Hire website in Tenerife. The theme manages the vehicle catalogue, block-based homepage, Contact Form 7 inquiry flow, operational content, blog, and structured data.
 
-## What's in the package
+This document describes the current state of theme version 1.2.2. Git retains the change history.
 
-- Full Site Editing block theme — everything is editable in the admin
-- Custom post type **Vehicles** + taxonomy **Categories** (Economy, SUV, Cabrio…)
-- Pre-built **block patterns** — hero, fleet, why-us, tips, CTA
-- Custom page templates: Home, Fleet, Vehicle Detail, About, Contact, Services, 404
-- Fully translatable strings + Polylang-ready (CZ / EN / ES / DE)
-- **schema.org** structured data (AutoRental) for SEO
-- Lazy-loaded images, optimised font loading
+## Current environment and requirements
 
-## Installation
+The metadata in `style.css` declares:
 
-1. Download `amarilla-tenerife.zip`
-2. In WordPress admin, go to **Appearance → Themes → Add New → Upload Theme**
-3. Pick the ZIP file and click **Install Now**
-4. Once installed, click **Activate**
-5. On first activation, default vehicle categories are created automatically (Economy, Family, SUV, Cabrio, Premium, Minivan)
+- theme version `1.2.2`,
+- WordPress `6.4` or newer,
+- tested up to the WordPress `7.0` series,
+- PHP `8.0` or newer.
 
-## First-time setup
+The current project runs on WordPress `7.0.1`. Contact Form 7 provides the main production inquiry form. Polylang is an optional integration for multilingual content.
 
-### 1. Permalink structure
-Go to **Settings → Permalinks** and select **Post name** (`/%postname%/`). If this is already set, just click **Save Changes** to refresh the URL rules for vehicles.
+The theme is a Full Site Editing/block theme: global styles are stored in `theme.json`, templates in `templates/`, template parts in `parts/`, and pre-built sections in `patterns/`.
 
-### 2. Create base pages
-Create these pages (**Pages → Add New**) and assign the matching template in the right sidebar:
+## Main features
 
-| Page name | Slug (URL) | Template |
+- vehicle catalogue implemented as the `vehicle` CPT with the `vehicle_category` taxonomy,
+- vehicle detail pages at `/vozidla/{slug}/` and the archive at `/vozovy-park/`,
+- a shared server-side card renderer and dynamic Gutenberg blocks,
+- manual selection of up to three featured homepage vehicles with fallback logic,
+- vehicle galleries using the WordPress core lightbox,
+- base and seasonal prices plus internal blackout notes,
+- the main inquiry workflow through CF7 at `/nezavazna-poptavka/`,
+- homepage content and operational details managed through the Customizer,
+- an optional Polylang language switcher,
+- blog templates and related posts,
+- JSON-LD `AutoRental`, `ItemList`, `Product`, `Offer`, `Article`, and `BreadcrumbList` nodes,
+- self-hosted Fraunces and DM Sans variable fonts.
+
+## Theme architecture
+
+The theme combines standard block templates with PHP renderers. Dynamic CPT and Customizer data enters the HTML through custom dynamic blocks, shortcodes, and PHP patterns.
+
+Custom dynamic blocks:
+
+- `amarilla/vehicle-card` renders one card in a Query Loop context,
+- `amarilla/featured-vehicles` renders the complete featured-vehicle section on the homepage.
+
+Both use the shared `amarilla_render_vehicle_card()` renderer, so homepage and archive cards follow the same data and presentation flow.
+
+Registered patterns form the default homepage: hero, trust strip, featured vehicles, “Why choose us”, Tenerife tips, locations, and the final CTA.
+
+## Vehicles
+
+### CPT, taxonomy, and URLs
+
+- CPT: `vehicle`
+- taxonomy: `vehicle_category`
+- detail: `/vozidla/{slug}/`
+- archive: `/vozovy-park/`
+
+The CPT supports title, block editor, featured image, excerpt, ordering, and custom fields. The taxonomy is hierarchical. During initialization, the theme adds any missing default categories: `ekonomy`, `family`, `suv`, `cabrio`, `premium`, and `minivan`.
+
+### Adding and editing vehicles
+
+In the administration, open **Vozový park → Přidat nové** (Fleet → Add New). One record represents a vehicle model, not an individual physical car. Manual and automatic variants of the same model are stored in one record.
+
+The main fields are:
+
+| Field | Meta key | Usage |
 |---|---|---|
-| Home | `/` | (default) |
-| About | `/o-nas/` | Stránka: O nás |
-| Contact | `/kontakt/` | Stránka: Kontakt |
-| Services | `/sluzby/` | Stránka: Služby |
+| Tagline | `_vehicle_tagline` | card and detail |
+| Seats | `_vehicle_seats` | card, detail, and schema |
+| Doors | `_vehicle_doors` | card, detail, and schema |
+| Available transmissions | `_vehicle_transmissions` | card, detail, schema, and CF7 |
+| Fuel | `_vehicle_fuel` | detail and schema |
+| Luggage | `_vehicle_luggage` | detail |
+| Air conditioning | `_vehicle_ac` | detail |
+| Base daily price | `_vehicle_price` | card and schema `Offer` |
+| Label | `_vehicle_label` | card highlight |
+| Rating | `_vehicle_rating` | optional `AggregateRating` |
+| Rating count | `_vehicle_rating_count` | optional `AggregateRating` |
 
-Then in **Settings → Reading**:
-- Your homepage displays → **A static page** → "Home"
+The vehicle title is used as both the option label and value in the CF7 select and as the key in the client-side transmission map. Published vehicle titles must therefore be unique.
 
-### 3. Contact details
-**Appearance → Customize → Kontaktní údaje** (Contact details) — phone, e-mail, address, WhatsApp. These are used in the footer and in SEO structured data.
+Vehicle ordering uses `menu_order` from the post ordering panel; lower numbers are placed first.
 
-### 4. Logo
-Once the logo is ready:
-- **Appearance → Customize → Site Identity → Select logo**
-- After uploading a logo, the "Amarilla" text placeholder is hidden automatically
-- Recommended size: 240 × 80 px (PNG or SVG)
+### Transmissions
 
-## Adding a vehicle
+The current `_vehicle_transmissions` data model is an array with these allowed values:
 
-1. **Vozový park (Fleet) → Add New**
-2. Fill in:
-   - **Title** — e.g. "Fiat Panda"
-   - **Featured image** (right sidebar) — ideally 1600 × 1100 px
-   - **Editor** — longer description shown on the detail page
-   - **Category** (right sidebar) — pick from Economy/SUV/…
-   - **Vehicle specifications** (below editor):
-     - **Tagline** — short line under the title on the card (e.g. "Small, agile, perfect for the city")
-     - **Seats** — number (1–9)
-     - **Doors** — number (2–5)
-     - **Transmission** — Manual / Automatic
-     - **Fuel** — Petrol / Diesel / Hybrid / Electric
-     - **Luggage** — text (e.g. "350 l" or "2 large suitcases")
-     - **Air conditioning** — Yes / No
-     - **Price per day** — text (e.g. "€25"). **If left empty, an "Inquire" button is shown instead of a price.**
-     - **Label** — optional (e.g. "Most popular", "New", "20% off"). Labels appear in yellow, categories in grey.
-3. Click **Publish**
+- `manual`,
+- `automatic`.
 
-## Vehicle ordering
+An administrator can select manual, automatic, or both variants. A regular save writes the new field and deletes the historical single-value `_vehicle_transmission` meta. The helper reads that legacy field only as a backward-compatible fallback for records that have not yet been migrated.
 
-Vehicles in the listing are ordered by the **Order** field (Page Attributes), found in the right sidebar under Page. Lower number = higher in the list.
+### Photos and gallery
 
-## Multilingual setup (Polylang)
+The main photo is the standard featured image:
 
-1. Install the **Polylang** plugin (free): **Plugins → Add New → Polylang**
-2. After activation add languages: **Languages → Languages → Add new** (Čeština, English, Español, Deutsch)
-3. Set Czech as the default
-4. **Languages → Settings → URL modifications** — recommended:
-   - Hide the language code in the URL for the default language (clean `/o-nas/` instead of `/cs/o-nas/`)
-5. Each page and vehicle now has flag icons in the editor for adding translations
-6. **Languages → String translations** — theme strings (buttons, eyebrows, etc.) for translation
+- on a card, it is displayed inside a 4:3 area with `object-fit: contain`, so CSS does not crop it,
+- on the detail page, it preserves its natural aspect ratio, uses `object-fit: contain`, and has a maximum height.
 
-## Contact form
+A new `vehicle` record starts in the editor with an empty `core/gallery` block. Additional photos belong in this standard Gutenberg gallery.
 
-We recommend **Contact Form 7** (free):
+The vehicle detail renderer:
 
-1. **Plugins → Add New** → search "Contact Form 7" → Install → Activate
-2. **Contact → Contact Forms → Add New**
-3. Use this template (paste into the "Form" field):
+- separates top-level `core/gallery` blocks from text content,
+- for backward compatibility, also groups top-level `core/image` blocks without a custom link,
+- excludes the featured image and duplicate attachment IDs,
+- enables the WordPress core lightbox for images without a custom link,
+- preserves images with a custom link in their original content position.
 
+`assets/js/vehicle-gallery.js` only calculates natural aspect ratios for the gallery layout. WordPress core provides the lightbox itself.
+
+### Seasonal pricing and availability
+
+The **Sezónní ceny a dostupnost** (Seasonal pricing and availability) meta box stores:
+
+- pricing periods as JSON in `_vehicle_pricing_periods` (`start`, `end`, `price`, and an internal `label`),
+- blackout rows in `_vehicle_blackouts`.
+
+If at least one pricing period exists, the card displays “od … €” (“from … €”) using the lowest numerically recognized value across the base price and all periods. The same lowest price is used in the detail-page schema.org `Offer`. Without seasonal periods, the card uses the original `_vehicle_price` text; if no price is set, it displays “Poptat termín” (“Ask about availability”).
+
+Blackouts are not a booking engine. The current frontend and CF7 integration do not evaluate them automatically or include them in email; they serve as internal administration information for a future or custom integration.
+
+### Duplication
+
+The **Duplikovat** (Duplicate) action in the vehicle list creates a new draft named `{original title} - kopie` and opens its editor. It copies the content, excerpt, featured image and other regular metadata, ordering, and all assigned taxonomies.
+
+It does not copy operational system metadata or the homepage featured state:
+
+- `_amarilla_home_featured`,
+- `_amarilla_home_featured_order`.
+
+Review and rename the copy before publishing it.
+
+### Homepage featured vehicles
+
+The **Úvodní stránka** (Homepage) meta box uses:
+
+- `_amarilla_home_featured` for inclusion,
+- `_amarilla_home_featured_order` for manual ordering.
+
+The `amarilla/featured-vehicles` block displays at most three published vehicles. It first takes selected vehicles in manual order, then orders by `menu_order`, title, and ID. If fewer than three vehicles are selected, it fills the remaining positions with other published vehicles ordered by `menu_order`, title, and ID, without duplicates.
+
+The homepage `ItemList` schema uses the same resolver.
+
+### Archive and cards
+
+The default `templates/archive-vehicle.html` uses a Query Loop for `vehicle` and the `amarilla/vehicle-card` block. A filter sets `posts_per_page = -1` only for this frontend vehicle archive Query Loop, so `/vozovy-park/` displays all published vehicles without pagination and does not affect other Query Loops or taxonomy archives.
+
+Depending on available data, a card displays the featured image, label or first category, title, tagline, seats, transmissions, doors, and price.
+
+## Vehicle inquiry and Contact Form 7
+
+The main production workflow uses:
+
+```text
+/nezavazna-poptavka/
 ```
-<label>Your name *
-[text* your-name] </label>
 
-<label>E-mail *
-[email* your-email] </label>
+The target CF7 form is not identified by a hardcoded production ID. The theme looks for it in this page's content as a `contact-form-7/contact-form-selector` block or a `[contact-form-7 ...]` shortcode. A fallback to a published form with the exact title `Nezávazná poptávka` is also retained.
 
-<label>Phone
-[tel your-phone] </label>
+The form must contain two selects:
 
-<label>Rental period (from – to)
-[text your-dates] </label>
-
-<label>Vehicle (if you have a specific one in mind)
-[text vehicle] </label>
-
-<label>Message
-[textarea your-message] </label>
-
-[submit "Send inquiry"]
+```text
+[select* select-auto "— Vyberte vůz —"]
+[select* transmission "Je mi to jedno" "Manuál" "Automat"]
 ```
 
-4. The vehicle detail CTA uses the safe `?requested_vehicle=<ID>` parameter. In the dedicated “Nezávazná poptávka” CF7 form, the theme fills the existing `select-auto` select from published vehicles, preselects the matching model, and synchronizes the `transmission` field from vehicle metadata.
-5. Insert the form shortcode `[contact-form-7 id="XXX"]` into the **Contact** page editor
+These are the actual Czech values used by the production form: “Je mi to jedno” means no transmission preference, “Manuál” means manual, and “Automat” means automatic. Their static options are only a minimal valid configuration. The theme replaces the options while rendering the target form:
 
-## Customizer (Appearance → Customize)
+- `select-auto` receives all published vehicles ordered by `menu_order` and title,
+- the CPT title is used directly as both the option value and label,
+- `transmission` is derived from `_vehicle_transmissions`,
+- when only one variant is available, only that variant is offered,
+- when two or no known variants are available, the universal options “Je mi to jedno”, “Manuál”, and “Automat” remain available.
 
-- **Site Identity** — Logo, site title, site icon (favicon)
-- **Kontaktní údaje (Contact details)** — Phone, e-mail, address, WhatsApp (custom section added by the theme)
-- **Menus** — Main navigation
-- **Colors and typography** — Editable via **Appearance → Editor (Site Editor) → Styles**
+The vehicle detail page links to:
 
-## Editing colors and fonts
-
-**Appearance → Editor → Styles** — clicking the brush icon top-right opens the styles panel. You can change:
-- Global colors
-- Fonts
-- Font sizes
-- Spacing
-
-## Theme files
-
+```text
+/nezavazna-poptavka/?requested_vehicle=<POST_ID>
 ```
+
+The theme verifies that the ID belongs to a published `vehicle`, preselects its title, and prepares the matching transmission options. The `?vehicle=` parameter is not used because `vehicle` is the public WordPress query variable for this CPT and collides with the main query.
+
+A small `amarilla-vehicle-transmission-data` JSON object is injected into the form HTML. `assets/js/theme.js` uses it to update the transmission options after a manual vehicle selection and after the form is reset. The integration uses neither AJAX nor jQuery.
+
+The CF7 mail template must include:
+
+```text
+[select-auto]
+[transmission]
+```
+
+The vehicle list is not maintained manually in the CF7 tag.
+
+### CF7 on the homepage
+
+The hero pattern renders `[amarilla_booking_widget]` only when the booking widget is enabled in the Customizer. If `amarilla_home_booking_form_shortcode` contains a valid standalone CF7 shortcode and Contact Form 7 is active, that form is rendered in a styled wrapper.
+
+Without a valid CF7 shortcode, a legacy GET widget targeting the contact page is available. The source also still contains the legacy internal form/CPT in `inc/inquiry-form.php` and the default `page-contact.html` template. These are not the main production inquiry workflow; new operational configuration should use `/nezavazna-poptavka/` and CF7.
+
+## Homepage and Site Editor
+
+The theme-file homepage baseline is `templates/front-page.html`. It consists of registered patterns and the dynamic featured block. The header, topbar, and footer are template parts in `parts/`.
+
+Block templates, template parts, navigation, and global styles from `theme.json` can be managed in **Appearance → Editor**. A template saved in the Site Editor becomes a `wp_template` database override and takes precedence over the same-named file in `templates/`.
+
+The production homepage may legitimately have its own `front-page` override. Do not reset the entire homepage to the theme baseline without checking it first: a reset removes the database version and activates the current `templates/front-page.html` file. Before making changes, compare the live content, saved override, and theme-file baseline.
+
+## Customizer
+
+The theme registers an **Amarilla Tenerife** panel in the Customizer. With a block theme, the direct `/wp-admin/customize.php` URL may be the most reliable route if the menu item is not visible.
+
+The Customizer manages data and content used by PHP patterns:
+
+- branding: main logo width, light logo, and text fallback,
+- topbar and language switcher,
+- phone, email, address, opening hours, and WhatsApp,
+- hero image, CTA, and optional homepage CF7 shortcode,
+- trust strip,
+- featured-vehicle section copy,
+- “Why choose us” and “Tenerife tips” sections,
+- final CTA,
+- footer content and social profiles,
+- up to six locations with address, hours, and GPS coordinates,
+- blog header and the related-posts switch.
+
+Set the standard custom logo through WordPress **Site Identity**. Colors, typography, spacing, and block layout belong in the Site Editor, not in the Amarilla panel.
+
+Locations are rendered as a list and an OpenStreetMap iframe. The bounding box is derived from the configured coordinates; neither Google Maps nor custom map JavaScript is used.
+
+## Multilingual support
+
+The theme uses the `amarilla` text domain, registers selected operational strings with Polylang, and can use its API to render the topbar language switcher. Without active Polylang, only a static switcher fallback without real translation URLs is displayed.
+
+Pages, posts, vehicles, and their taxonomies are translated as standard Polylang content. When `pll_get_post()` is available, the inquiry URL helper uses the translated `nezavazna-poptavka` page.
+
+## SEO and schema.org
+
+The theme injects one JSON-LD document with an `@graph` into `<head>`. It is not rendered in the administration or on 404 pages.
+
+- `AutoRental` is the base node on frontend pages. It uses the site name, description, contact details, logo, social profiles, opening hours, and configured locations with address and GPS coordinates.
+- `BreadcrumbList` is added to pages, vehicle detail pages, the vehicle archive, and individual blog posts.
+- The homepage receives an `ItemList` with at most three vehicles from the same featured resolver as the homepage section.
+- The vehicle archive receives an `ItemList` of all published vehicles ordered by `menu_order`.
+- A vehicle detail page receives a `Product` with its image and available specifications. If a numeric price can be determined, an `Offer` with the lowest base/seasonal price is added. `AggregateRating` is added only when both a rating and a positive rating count are set.
+- An individual blog post receives an `Article` with dates, author, and optional image.
+
+Only enter genuine rating data.
+
+## Blog
+
+The blog uses the standard WordPress `post` post type:
+
+- `templates/home.html` displays the nine latest posts per page in a three-column grid,
+- `templates/archive.html` provides category, author, and date archives,
+- `templates/single.html` displays the post, author, date, featured image, and estimated reading time,
+- `[amarilla_reading_time]` calculates at least one minute at 200 words per minute,
+- `[amarilla_related_posts]` can display up to three latest posts from the same categories below an article.
+
+For a separate blog page, configure a static homepage and a posts page under the WordPress reading settings. The blog header and related posts are configured in the Customizer.
+
+## Assets and fonts
+
+The frontend loads `style.css`, `assets/css/theme.css`, and deferred `assets/js/theme.js` with the `AMARILLA_VERSION` cache-busting version. `assets/js/vehicle-gallery.js` is loaded only on vehicle detail pages.
+
+Fraunces and DM Sans are variable WOFF2 fonts stored in `assets/fonts/` for latin and latin-ext. They are registered by `theme.json`; critical latin-ext faces are preloaded from the theme. The theme does not contact Google Fonts.
+
+## Cache and operational notes
+
+Production uses page caching (WP Fastest Cache). The dynamic vehicle list and transmission JSON map are part of the rendered CF7 form HTML, not a separate API request.
+
+A page-cache purge may be needed after:
+
+- publishing, hiding, or renaming a vehicle,
+- changing `_vehicle_transmissions`,
+- changing the CF7 tags or placement of the target form.
+
+The same caution applies to homepage changes when a Site Editor template override exists. This README does not document configuration of the specific cache plugin.
+
+## Development and deployment
+
+Theme repository:
+
+```text
+/srv/apps/tenerife-theme
+```
+
+The DEV WordPress instance runs in the Docker stack at `/srv/stacks/tenerife-wp-dev`; the theme is mounted in the WordPress container at:
+
+```text
+/var/www/html/wp-content/themes/tenerife
+```
+
+After making changes, run at least:
+
+```bash
+git diff --check
+git status --short --branch
+```
+
+Lint changed PHP files in the DEV container and verify the frontend on the DEV instance. Changed JavaScript can be syntax-checked with `node --check`.
+
+The production deployment script defaults to a safe dry run:
+
+```bash
+./scripts/deploy-theme.sh
+```
+
+A production apply requires an explicit `--apply` and the confirmation `DEPLOY`. By default, it runs `scripts/backup-remote-theme.sh` before upload. Use `--delete` and `--no-backup` only after separate explicit approval.
+
+## File structure
+
+```text
 amarilla-tenerife/
-├── style.css                — theme metadata
-├── theme.json               — global settings (colors, fonts)
-├── functions.php            — main functions
-├── README.md                — Czech docs
-├── README-en.md             — this file
+├── style.css                       metadata and entry stylesheet
+├── theme.json                      global block-theme settings
+├── functions.php                   bootstrap, assets, and includes
+├── templates/                      theme-file block templates
+├── parts/                          header, footer, and topbar
+├── patterns/                       PHP homepage patterns
 ├── inc/
-│   ├── vehicle-cpt.php      — Vehicle CPT registration + meta box
-│   ├── block-bindings.php   — shortcodes for rendering vehicle data
-│   ├── helpers.php          — helper functions + Customizer
-│   └── polylang-compat.php  — Polylang compatibility
-├── templates/               — page templates
-├── parts/                   — header, footer, topbar
-├── patterns/                — pre-built sections
+│   ├── vehicle-cpt.php             CPT, taxonomy, and vehicle metadata
+│   ├── block-bindings.php          vehicle shortcodes, gallery, and cards
+│   ├── featured-vehicles.php       homepage featured resolver and block
+│   ├── vehicle-inquiry-cf7.php     main CF7 vehicle workflow
+│   ├── seasonal-pricing.php        pricing periods and blackout metadata
+│   ├── admin-vehicle-duplicate.php vehicle duplication in administration
+│   ├── customizer.php              Amarilla panel and selective refresh
+│   ├── content-shortcodes.php      dynamic header/footer components
+│   ├── locations.php               locations and OpenStreetMap
+│   ├── blog.php                    blog helpers and shortcodes
+│   ├── polylang-compat.php         language switcher and strings
+│   └── inquiry-form.php            legacy internal inquiry module
 ├── assets/
-│   ├── css/                 — stylesheets
-│   ├── js/                  — JavaScript
-│   └── images/              — theme images
-└── languages/               — translations (.po, .mo files)
+│   ├── css/                        frontend and editor styles
+│   ├── js/                         frontend/editor scripts
+│   ├── fonts/                      self-hosted WOFF2 fonts
+│   └── images/                     static theme images
+└── scripts/                        backup and SFTP deployment workflow
 ```
 
-## FAQ
+## License
 
-**How do I change the images in "Tips from Tenerife"?**
-Edit patterns: **Appearance → Editor → Patterns → Tipy z Tenerife**, or edit the `patterns/tenerife-tips.php` file directly (replace the `<img src="...">` URLs).
-
-**How do I change the hero image?**
-Edit `patterns/hero.php` — find the `<img src="...">` line. Best practice: upload your own image to the Media Library and use its URL.
-
-**The fleet section doesn't show up on the homepage.**
-You need to add at least one vehicle (Vozový park → Add New). When there are no vehicles, the section shows a prompt to add some.
-
-**Vehicle URLs are broken after activation.**
-Go to **Settings → Permalinks** and click **Save Changes** to refresh the URL rules.
-
-## Developer contact
-
-For customisations or implementation questions, contact us.
-
----
-
-**Version:** 1.0.0
-**License:** GNU GPL v2 or later
-
----
-
-## What's new in 1.2.0
-
-- **Self-hosted fonts** — Fraunces & DM Sans bundled in `assets/fonts/` (GDPR compliance for EU operators; no `fonts.googleapis.com` connection)
-- **Inquiry / booking form** — compact 4-field widget in hero (pickup date → return → location → vehicle class) + full form on `/kontakt/`, both wired to a new "Poptávky" CPT and email to the operator. WP nonce, honeypot, 60 s/IP rate limit, server-side date validation.
-- **Seasonal pricing per vehicle** — repeatable period table (from–to, daily price, label) + blackout days. Fleet cards display "from XX €" when seasonal periods exist, lowest price flows into schema.org `Offer`.
-- **Extended schema.org** — `@graph` with `AutoRental` (with all branches as `location[].geo`), per-vehicle `Product` + `Offer` + `AggregateRating`, `Article` for blog posts, and `BreadcrumbList` site-wide.
-- **Pickup locations / map** — Customizer panel for up to 6 branches with GPS coords, rendered as OpenStreetMap iframe embed (no Google Maps, no token). Locations flow into both the inquiry form and the schema.
-- **Blog** — `home.html`, `single.html`, `archive.html` templates, related-posts shortcode, reading-time estimate, Customizer panel for the archive header.
-
-### Logo upload
-Inside the Site Editor, the `[amarilla_logo]` shortcode block looks empty — that's expected. Upload your logo in **Appearance → Customize → Site Identity → Select logo** (`/wp-admin/customize.php`). The shortcode picks it up via `has_custom_logo()`.
+GNU General Public License v2 or later.

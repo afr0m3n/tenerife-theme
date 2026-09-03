@@ -1,326 +1,343 @@
-# Amarilla Tenerife — WordPress šablona
+# Amarilla Tenerife
 
-Block theme pro autopůjčovnu Amarilla Car Hire na Tenerife. Připraveno pro WordPress 6.4+, PHP 8.0+ a plugin Polylang pro vícejazyčné stránky.
+Vlastní WordPress block theme pro web autopůjčovny Amarilla Car Hire na Tenerife. Theme spravuje katalog vozidel, blokovou homepage, poptávkový tok přes Contact Form 7, provozní obsah, blog a strukturovaná data.
 
-## Obsah balíčku
+Tento dokument popisuje aktuální stav theme ve verzi 1.2.2. Historii změn uchovává Git.
 
-- Plnohodnotný block theme (Full Site Editing) – vše se dá upravovat přímo v adminu
-- Custom post type **Vozidla** + taxonomie **Kategorie** (Ekonomy, SUV, Cabrio…)
-- Předpřipravené **block patterns** (sekce) – hero, vozový park, proč my, tipy, CTA
-- Custom šablony pro stránky: Domů, Vozový park, Detail vozidla, O nás, Kontakt, Služby, 404
-- Plně přeložitelné texty + připraveno pro Polylang (CZ/EN/ES/DE)
-- Strukturovaná data **schema.org** (AutoRental) pro SEO
-- Lazy loading obrázků, optimalizované načítání fontů
+## Aktuální prostředí a požadavky
 
-## Instalace
+Metadata v `style.css` deklarují:
 
-1. Stáhněte si soubor `amarilla-tenerife.zip`
-2. V administraci WordPressu jděte do **Vzhled → Šablony → Nahrát šablonu**
-3. Vyberte ZIP a klikněte na **Nainstalovat**
-4. Po instalaci klikněte na **Aktivovat**
-5. Při první aktivaci se automaticky vytvoří kategorie vozidel (Ekonomy, Family, SUV, Kabriolet, Premium, Minivan)
+- theme version `1.2.2`,
+- WordPress `6.4` nebo novější,
+- testováno do řady WordPress `7.0`,
+- PHP `8.0` nebo novější.
 
-## První kroky po instalaci
+Aktuální projekt je provozován na WordPress `7.0.1`. Contact Form 7 zajišťuje hlavní produkční poptávkový formulář. Polylang je volitelná integrace pro vícejazyčný obsah.
 
-### 1. Nastavení trvalých odkazů
-Jděte do **Nastavení → Trvalé odkazy** a vyberte **Název příspěvku** (`/%postname%/`). Pokud už toto máte, jen klikněte na **Uložit změny** – tím se obnoví URL pravidla pro vozidla.
+Theme je Full Site Editing/block theme: globální styly jsou v `theme.json`, šablony v `templates/`, template parts v `parts/` a předpřipravené sekce v `patterns/`.
 
-### 2. Vytvoření základních stránek
-Vytvořte tyto stránky (**Stránky → Přidat novou**) a u každé v pravém panelu vyberte odpovídající **Šablona**:
+## Hlavní funkce
 
-| Název stránky | Slug (URL) | Šablona |
+- katalog vozidel jako CPT `vehicle` s taxonomií `vehicle_category`,
+- detail vozidla na `/vozidla/{slug}/` a archiv na `/vozovy-park/`,
+- společný serverový renderer karet a dynamické Gutenberg bloky,
+- ruční výběr maximálně tří doporučených vozidel na homepage s fallbackem,
+- galerie vozidel s WordPress core lightboxem,
+- základní a sezónní ceny plus interní blackout poznámky,
+- hlavní poptávkový workflow přes CF7 na `/nezavazna-poptavka/`,
+- obsah homepage a provozní údaje spravované přes Customizer,
+- volitelný Polylang přepínač jazyků,
+- blogové šablony a související články,
+- JSON-LD `AutoRental`, `ItemList`, `Product`, `Offer`, `Article` a `BreadcrumbList`,
+- self-hostované variable fonty Fraunces a DM Sans.
+
+## Architektura theme
+
+Theme kombinuje standardní blokové šablony s PHP renderery. Dynamická data z CPT a Customizeru vstupují do HTML přes vlastní dynamické bloky, shortcodes a PHP patterns.
+
+Vlastní dynamické bloky:
+
+- `amarilla/vehicle-card` vykresluje jednu kartu v kontextu Query Loopu,
+- `amarilla/featured-vehicles` vykresluje celou homepage sekci doporučených vozidel.
+
+Oba používají společný renderer `amarilla_render_vehicle_card()`, takže karta na homepage a v archivu má stejný datový a prezentační tok.
+
+Registrované patterns tvoří výchozí homepage: hero, trust strip, doporučená vozidla, „Proč si vybrat nás“, tipy, pobočky a závěrečné CTA.
+
+## Vozidla
+
+### CPT, taxonomie a URL
+
+- CPT: `vehicle`
+- taxonomie: `vehicle_category`
+- detail: `/vozidla/{slug}/`
+- archiv: `/vozovy-park/`
+
+CPT podporuje název, blokový editor, náhledový obrázek, excerpt, pořadí a custom fields. Taxonomie je hierarchická. Theme při inicializaci doplňuje chybějící výchozí kategorie `ekonomy`, `family`, `suv`, `cabrio`, `premium` a `minivan`.
+
+### Přidání a editace
+
+V administraci otevřete **Vozový park → Přidat nové**. Jeden záznam představuje model auta, nikoli jednotlivý fyzický kus. Manuální a automatická varianta stejného modelu se evidují na jednom záznamu.
+
+Vyplňují se zejména:
+
+| Pole | Meta key | Použití |
 |---|---|---|
-| Domů | `/` | (výchozí) |
-| O nás | `/o-nas/` | Stránka: O nás |
-| Kontakt | `/kontakt/` | Stránka: Kontakt |
-| Služby | `/sluzby/` | Stránka: Služby |
+| Krátký popis | `_vehicle_tagline` | karta a detail |
+| Počet míst | `_vehicle_seats` | karta, detail, schema |
+| Počet dveří | `_vehicle_doors` | karta, detail, schema |
+| Dostupné převodovky | `_vehicle_transmissions` | karta, detail, schema a CF7 |
+| Palivo | `_vehicle_fuel` | detail a schema |
+| Kufr | `_vehicle_luggage` | detail |
+| Klimatizace | `_vehicle_ac` | detail |
+| Základní cena za den | `_vehicle_price` | karta a schema `Offer` |
+| Štítek | `_vehicle_label` | zvýraznění karty |
+| Hodnocení | `_vehicle_rating` | volitelné `AggregateRating` |
+| Počet hodnocení | `_vehicle_rating_count` | volitelné `AggregateRating` |
 
-Poté v **Nastavení → Zobrazení** nastavte:
-- Hlavní strana → **Statická stránka** → "Domů"
+Název vozidla se používá jako label i value v CF7 selectu a jako klíč klientské mapy převodovek. Názvy publikovaných vozidel proto musí být unikátní.
 
-### 3. Kontaktní údaje
-**Vzhled → Customizovat → Kontaktní údaje** – telefon, e-mail, adresa, WhatsApp. Tyto údaje se používají v patičce a structured datech pro SEO.
+Pořadí vozidel určuje `menu_order` z panelu pořadí příspěvku; nižší číslo se řadí dříve.
 
-### 4. Logo
-Až budete mít hotové logo:
-- **Vzhled → Customizovat → Identita stránky → Vybrat logo**
-- Po nahrání loga se automaticky skryje text placeholder "Amarilla"
-- Doporučená velikost: 240 × 80 px (PNG nebo SVG)
+### Převodovky
 
-## Přidání vozidla
+Aktuální datový model `_vehicle_transmissions` je pole s povolenými hodnotami:
 
-1. **Vozový park → Přidat nové**
-2. Vyplňte:
-   - **Název** – např. "Fiat Panda"
-   - **Hlavní fotka** (vpravo dole) – ideálně 1600 × 1100 px
-   - **Editor** – delší popis vozidla pro detail stránku
-   - **Kategorie** (vpravo) – vyberte z Ekonomy/SUV/…
-   - **Specifikace vozidla** (pod editorem):
-     - **Krátký popis** – krátká věta pod název na kartě (např. "Malý, mrštný, ideální do města")
-     - **Počet míst** – číslo (1–9)
-     - **Počet dveří** – číslo (2–5)
-     - **Převodovka** – Manuál / Automat
-     - **Palivo** – Benzín / Nafta / Hybrid / Elektro
-     - **Kufr** – text (např. "350 l" nebo "2 velké kufry")
-     - **Klimatizace** – Ano / Ne
-     - **Cena za den** – text (např. "25 €"). **Pokud necháte prázdné, místo ceny se zobrazí tlačítko "Poptat termín".**
-     - **Štítek** – volitelný (např. "Nejoblíbenější", "Novinka", "Sleva 20 %"). Štítky se zobrazí žlutě, kategorie šedě.
-3. Klikněte **Publikovat**
+- `manual`,
+- `automatic`.
 
-## Pořadí vozidel
+Správce může zaškrtnout manuál, automat nebo obě varianty. Při běžném uložení se zapisuje nové pole a historická single meta `_vehicle_transmission` se odstraní. Helper ji čte pouze jako backward-compatible fallback u dosud nemigrovaných záznamů.
 
-Vozidla v přehledu se řadí podle pole **Pořadí** (Page Attributes). Najdete ho v pravém panelu pod sekcí Stránka. Nižší číslo = výše v seznamu.
+### Fotografie a galerie
 
-## Vícejazyčnost (Polylang)
+Hlavní fotografie je standardní featured image:
 
-1. Nainstalujte plugin **Polylang** (zdarma): **Pluginy → Přidat nový → Polylang**
-2. Po aktivaci přidejte jazyky: **Languages → Languages → Add new** (Čeština, English, Español, Deutsch)
-3. Nastavte český jako výchozí
-4. **Languages → Settings → URL modifications** doporučujeme:
-   - Pro výchozí jazyk skrýt jazykový kód v URL (čisté `/o-nas/` místo `/cs/o-nas/`)
-5. Nyní můžete u každé stránky a vozidla přidávat překlady přes ikony vlajek v editoru
-6. **Languages → String translations** – zde najdete texty šablony (tlačítka, eyebrowy atd.) pro překlad
+- na kartě je uvnitř poměru 4:3 zobrazena přes `object-fit: contain`, tedy bez CSS ořezu,
+- na detailu zachovává přirozený poměr, používá `object-fit: contain` a má omezenou maximální výšku.
 
-## Kontaktní formulář
+Nový záznam `vehicle` začíná v editoru prázdným blokem `core/gallery`. Další fotografie patří do této standardní Gutenberg galerie.
 
-Doporučujeme **Contact Form 7** (zdarma). Theme neukládá ID formuláře natvrdo,
-protože se může lišit mezi DEV a produkcí.
+Detail vozidla:
 
-1. **Pluginy → Přidat nový** → vyhledejte "Contact Form 7" → Instalovat → Aktivovat
-2. **Kontakt → Kontaktní formuláře → Přidat nový**
-3. Pro homepage použijte tuto šablonu (zkopírujte do pole **Form**):
+- oddělí top-level `core/gallery` od textového obsahu,
+- kvůli backward compatibility seskupí i top-level `core/image`, pokud nemá vlastní odkaz,
+- vynechá featured image a opakované attachment ID,
+- u obrázků bez vlastního odkazu zapne WordPress core lightbox,
+- zachová obrázek s vlastním odkazem v původním obsahu.
 
-```
-<div class="amarilla-form-grid amarilla-form-grid--two-columns">
-  <label class="amarilla-field">
-    <span>Vaše jméno</span>
-    [text* your-name class:amarilla-input]
-  </label>
+`assets/js/vehicle-gallery.js` pouze dopočítává přirozené poměry stran pro layout galerie. Samotný lightbox zajišťuje WordPress core.
 
-  <label class="amarilla-field">
-    <span>Kontakt na Vás</span>
-    [text* your-contact class:amarilla-input placeholder "Telefon/e-mail"]
-  </label>
+### Sezónní ceny a dostupnost
 
-  <label class="amarilla-field">
-    <span>Datum od</span>
-    [date* date-from class:amarilla-input]
-  </label>
+Meta box **Sezónní ceny a dostupnost** ukládá:
 
-  <label class="amarilla-field">
-    <span>Datum do</span>
-    [date* date-to class:amarilla-input]
-  </label>
-</div>
+- cenová období jako JSON v `_vehicle_pricing_periods` (`start`, `end`, `price`, interní `label`),
+- blackout řádky v `_vehicle_blackouts`.
 
-<div class="amarilla-form-actions">
-  [submit class:amarilla-submit "Odeslat poptávku"]
-  <p class="amarilla-form-note">Žádná blokace karty.</p>
-</div>
-```
+Pokud existuje alespoň jedno cenové období, karta zobrazí „od … €“ podle nejnižší číselně rozpoznané ceny ze základní ceny a všech období. Stejná nejnižší cena vstupuje na detailu do schema.org `Offer`. Bez sezónních období karta používá původní text `_vehicle_price`; pokud není cena vyplněna, zobrazí „Poptat termín“.
 
-4. V záložce **Mail** použijte jako tělo zprávy například:
+Blackouty nejsou rezervační engine. Aktuální frontend ani CF7 je automaticky nevyhodnocují a neposílají do e-mailu; slouží jako interní admin informace pro budoucí nebo vlastní integraci.
 
-```
-Nová poptávka z webu Amarilla Tenerife
+### Duplikace
 
-Jméno: [your-name]
-Kontakt: [your-contact]
+Akce **Duplikovat** v seznamu vozidel vytvoří nový koncept s názvem `{původní název} - kopie` a otevře jeho editor. Kopíruje obsah, excerpt, featured image a ostatní běžná metadata, pořadí a všechny přiřazené taxonomie.
 
-Datum od: [date-from]
-Datum do: [date-to]
+Nekopíruje provozní systémová metadata ani homepage featured stav:
+
+- `_amarilla_home_featured`,
+- `_amarilla_home_featured_order`.
+
+Kopii je nutné zkontrolovat, přejmenovat a teprve potom publikovat.
+
+### Homepage featured vehicles
+
+Meta box **Úvodní stránka** používá:
+
+- `_amarilla_home_featured` pro zařazení,
+- `_amarilla_home_featured_order` pro ruční pořadí.
+
+Blok `amarilla/featured-vehicles` zobrazuje maximálně tři publikovaná vozidla. Nejprve vezme označená vozidla podle ručního pořadí, poté podle `menu_order`, názvu a ID. Pokud jsou označena méně než tři, volná místa doplní dalšími publikovanými vozidly podle `menu_order`, názvu a ID bez duplicit.
+
+Stejný resolver poskytuje vozidla pro homepage `ItemList` schema.
+
+### Archiv a karty
+
+Výchozí `templates/archive-vehicle.html` používá Query Loop pro `vehicle` a blok `amarilla/vehicle-card`. Filter pro hlavní frontendový archiv nastavuje pouze tomuto vehicle Query Loopu `posts_per_page = -1`, takže `/vozovy-park/` zobrazuje všechna publikovaná vozidla bez stránkování a neovlivňuje jiné Query Loopy ani taxonomické archivy.
+
+Karta zobrazuje podle dostupných dat featured image, štítek nebo první kategorii, název, tagline, počet míst, převodovky, dveře a cenu.
+
+## Nezávazná poptávka a Contact Form 7
+
+Hlavní produkční workflow používá stránku:
+
+```text
+/nezavazna-poptavka/
 ```
 
-5. Pro homepage vložte shortcode formuláře do **Customizer → Amarilla → Hero → Contact Form 7 shortcode pro hero formulář**, například `[contact-form-7 id="123" title="Poptávka vozu" html_class="amarilla-form-card amarilla-cf7-form amarilla-booking-form"]`.
-6. Pro další stránky obalte CF7 shortcode wrapperem s třídami `amarilla-form-card amarilla-cf7-form`, pokud má použít stejný styl:
+Cílový CF7 formulář se neurčuje hardcoded produkčním ID. Theme jej hledá v obsahu této stránky jako blok `contact-form-7/contact-form-selector` nebo shortcode `[contact-form-7 ...]`; zachován je také fallback na publikovaný formulář s přesným názvem `Nezávazná poptávka`.
 
+Formulář musí obsahovat dva selecty:
+
+```text
+[select* select-auto "— Vyberte vůz —"]
+[select* transmission "Je mi to jedno" "Manuál" "Automat"]
 ```
-<div class="amarilla-form-card amarilla-cf7-form">
-  [contact-form-7 id="123" title="Poptávka vozu"]
-</div>
+
+Jejich statické options jsou jen minimální validní konfigurace. Theme je při renderu cílového formuláře nahradí:
+
+- `select-auto` dostane všechna publikovaná vozidla seřazená podle `menu_order` a názvu,
+- value i label option jsou přímo název CPT záznamu,
+- `transmission` se odvodí z `_vehicle_transmissions`,
+- při jediné dostupné variantě se nabídne pouze tato varianta,
+- při dvou nebo žádné známé variantě zůstanou univerzální možnosti „Je mi to jedno“, „Manuál“ a „Automat“.
+
+Detail vozidla odkazuje na:
+
+```text
+/nezavazna-poptavka/?requested_vehicle=<POST_ID>
 ```
 
-7. CTA na detailu vozu používá bezpečný parametr `?requested_vehicle=<ID>`. Na samostatném CF7 formuláři „Nezávazná poptávka“ šablona server-side naplní existující select `select-auto` publikovanými vozidly, předvybere odpovídající model a synchronizuje pole `transmission` podle metadat vozu.
+Theme ověří, že ID patří publikovanému `vehicle`, předvybere jeho název a připraví odpovídající transmission options. Parametr `?vehicle=` se nepoužívá, protože `vehicle` je veřejný WordPress query var tohoto CPT a koliduje s main query.
 
-## Customizer (Vzhled → Customizovat)
+Do HTML formuláře se vloží malý JSON objekt `amarilla-vehicle-transmission-data`. `assets/js/theme.js` podle něj aktualizuje transmission options při ruční změně auta a po resetu formuláře. Integrace nepoužívá AJAX ani jQuery.
 
-- **Identita stránky** – Logo, název webu, ikona webu (favicon)
-- **Kontaktní údaje** – Telefon, e-mail, adresa, WhatsApp (vlastní sekce přidaná šablonou)
-- **Menu** – Hlavní navigace
-- **Barvy a typografie** – Lze upravit přes **Vzhled → Editor (Site Editor) → Styly**
+Mail template CF7 musí obsahovat:
 
-## Úprava barev a fontů
-
-**Vzhled → Editor → Styly** – kliknutím na štětku v pravém horním rohu se otevře panel se styly. Lze měnit:
-- Globální barvy
-- Fonty
-- Velikosti písma
-- Mezery
-
-## Soubory šablony
-
+```text
+[select-auto]
+[transmission]
 ```
+
+Seznam vozidel se v CF7 tagu ručně neudržuje.
+
+### CF7 na homepage
+
+Hero pattern vykreslí `[amarilla_booking_widget]` pouze tehdy, když je v Customizeru zapnutý booking widget. Je-li v nastavení `amarilla_home_booking_form_shortcode` validní samostatný CF7 shortcode a Contact Form 7 je aktivní, použije se tento formulář ve styled wrapperu.
+
+Bez validního CF7 shortcodu existuje legacy GET widget směřující na kontaktní stránku. Stejně tak source stále obsahuje legacy interní formulář/CPT v `inc/inquiry-form.php` a ve výchozí šabloně `page-contact.html`. Nejde o hlavní produkční poptávkový workflow; nové provozní nastavení má používat `/nezavazna-poptavka/` a CF7.
+
+## Homepage a Site Editor
+
+Theme-file baseline homepage je `templates/front-page.html`. Skládá se z registrovaných patterns a dynamického featured bloku. Hlavička, topbar a patička jsou template parts v `parts/`.
+
+V **Vzhled → Editor** lze spravovat blokové templates, template parts, navigaci a globální styly z `theme.json`. Uložená úprava template v Site Editoru vzniká v databázi jako `wp_template` override a má přednost před stejnojmenným souborem v `templates/`.
+
+Produkční homepage může mít legitimní vlastní `front-page` override. Neresetujte bez kontroly celou homepage na theme baseline: reset odstraní databázovou variantu a aktivuje aktuální soubor `templates/front-page.html`. Při úpravě nejdřív porovnejte živý obsah, uložený override a theme-file baseline.
+
+## Customizer
+
+Theme registruje panel **Amarilla Tenerife** v Customizeru. U block theme může být nejspolehlivější přímá cesta `/wp-admin/customize.php`, pokud položka není viditelná v menu.
+
+Customizer spravuje data a obsah PHP patterns:
+
+- branding: šířka hlavního loga, světlé logo a textový fallback,
+- horní lištu a jazykový přepínač,
+- telefon, e-mail, adresu, otevírací dobu a WhatsApp,
+- hero včetně obrázku, CTA a volitelného homepage CF7 shortcodu,
+- trust strip,
+- texty sekce doporučených vozidel,
+- sekce „Proč si vybrat nás“ a „Tipy z Tenerife“,
+- závěrečné CTA,
+- obsah patičky a sociální sítě,
+- až šest poboček s adresou, hodinami a GPS,
+- hlavičku blogu a zapnutí souvisejících článků.
+
+Standardní custom logo se nastavuje přes WordPress **Identitu webu**. Barvy, typografie, rozestupy a blokové rozvržení patří do Site Editoru, nikoli do panelu Amarilla.
+
+Pobočky se vykreslují jako seznam a OpenStreetMap iframe. Bounding box se odvozuje z vyplněných souřadnic; není použit Google Maps ani vlastní mapový JavaScript.
+
+## Vícejazyčnost
+
+Theme používá text domain `amarilla`, registruje vybrané provozní řetězce pro Polylang a umí z jeho API vykreslit jazykový přepínač v topbaru. Bez aktivního Polylangu se zobrazí pouze statický fallback přepínače bez reálných překladových URL.
+
+Stránky, články, vozidla a jejich taxonomie se překládají standardním obsahem Polylangu. Helper poptávkové URL při dostupném `pll_get_post()` použije překlad stránky `nezavazna-poptavka`.
+
+## SEO a schema.org
+
+Theme vkládá do `<head>` jeden JSON-LD dokument s `@graph`. Na adminu a 404 se nevykresluje.
+
+- `AutoRental` je základní node na frontendových stránkách. Používá název webu, popis, kontakty, logo, sociální profily, otevírací dobu a nakonfigurované pobočky s adresou a GPS.
+- `BreadcrumbList` se přidává na stránky, detail vozidla, vehicle archiv a jednotlivý blogový článek.
+- Homepage dostává `ItemList` maximálně tří vozidel ze stejného featured resolveru jako homepage sekce.
+- Vehicle archiv dostává `ItemList` všech publikovaných vozidel v pořadí `menu_order`.
+- Detail vozidla dostává `Product` s obrázkem a dostupnými specifikacemi. Pokud lze určit číselnou cenu, přidá se `Offer` s nejnižší základní/sezónní cenou. `AggregateRating` se přidá jen při současně vyplněném hodnocení a kladném počtu hodnocení.
+- Jednotlivý blogový příspěvek dostává `Article` s daty, autorem a volitelným obrázkem.
+
+Do hodnocení zadávejte pouze skutečná data.
+
+## Blog
+
+Blog používá standardní WordPress post type `post`:
+
+- `templates/home.html` zobrazuje devět nejnovějších článků na stránku v třísloupcové mřížce,
+- `templates/archive.html` zajišťuje archivy kategorií, autorů a datumů,
+- `templates/single.html` zobrazuje článek, autora, datum, featured image a odhad čtení,
+- `[amarilla_reading_time]` počítá nejméně jednu minutu při rychlosti 200 slov za minutu,
+- `[amarilla_related_posts]` může pod článkem zobrazit až tři nejnovější příspěvky ze stejných kategorií.
+
+Pro samostatnou blogovou stránku se v nastavení čtení použije statická homepage a samostatná stránka příspěvků. Hlavička blogu a související články se nastavují v Customizeru.
+
+## Assety a fonty
+
+Frontend načítá `style.css`, `assets/css/theme.css` a deferred `assets/js/theme.js` s cache-busting verzí `AMARILLA_VERSION`. `assets/js/vehicle-gallery.js` se načítá pouze na detailu vozidla.
+
+Fraunces a DM Sans jsou variable WOFF2 fonty uložené v `assets/fonts/` pro latin a latin-ext. Registruje je `theme.json`; kritické latin-ext řezy se preloadují z theme. Theme nekontaktuje Google Fonts.
+
+## Cache a provozní poznámky
+
+Produkce používá page cache (WP Fastest Cache). Dynamický seznam vozidel a JSON mapa převodovek jsou součástí renderovaného HTML CF7 formuláře, nikoli samostatného API requestu.
+
+Po změně následujících dat může být potřeba purge page cache:
+
+- publikování, skrytí nebo přejmenování vozidla,
+- změna `_vehicle_transmissions`,
+- změna CF7 tagů nebo vložení cílového formuláře.
+
+Stejnou opatrnost vyžadují změny homepage, pokud existuje Site Editor template override. README nepopisuje konfiguraci konkrétního cache pluginu.
+
+## Vývoj a deploy
+
+Repozitář theme:
+
+```text
+/srv/apps/tenerife-theme
+```
+
+DEV WordPress běží v Docker stacku `/srv/stacks/tenerife-wp-dev`; theme je ve WordPress kontejneru připojena jako:
+
+```text
+/var/www/html/wp-content/themes/tenerife
+```
+
+Po změnách proveďte minimálně:
+
+```bash
+git diff --check
+git status --short --branch
+```
+
+Změněné PHP soubory lintujte v DEV kontejneru a frontend ověřte na DEV instanci. Změněný JavaScript lze syntakticky ověřit přes `node --check`.
+
+Produkční deploy skript je bezpečně výchozí v dry-run režimu:
+
+```bash
+./scripts/deploy-theme.sh
+```
+
+Ostrý apply vyžaduje explicitní `--apply` a potvrzení `DEPLOY`. Standardně před uploadem spustí `scripts/backup-remote-theme.sh`. Přepínače `--delete` a `--no-backup` používejte pouze po samostatném výslovném schválení.
+
+## Struktura souborů
+
+```text
 amarilla-tenerife/
-├── style.css                — metadata šablony
-├── theme.json               — globální nastavení (barvy, fonty)
-├── functions.php            — hlavní funkce
-├── README.md                — tento soubor
-├── README-en.md             — anglická verze
+├── style.css                       metadata a vstupní stylesheet
+├── theme.json                      globální block-theme nastavení
+├── functions.php                   bootstrap, assety a includes
+├── templates/                      theme-file block templates
+├── parts/                          header, footer a topbar
+├── patterns/                       PHP patterns homepage
 ├── inc/
-│   ├── vehicle-cpt.php      — registrace CPT Vozidla + meta box
-│   ├── block-bindings.php   — shortcodes pro vykreslování dat
-│   ├── helpers.php          — pomocné funkce + Customizer
-│   └── polylang-compat.php  — kompatibilita s Polylang
-├── templates/               — šablony stránek
-├── parts/                   — header, footer, topbar
-├── patterns/                — předpřipravené sekce
+│   ├── vehicle-cpt.php             CPT, taxonomie a vehicle metadata
+│   ├── block-bindings.php          vehicle shortcodes, galerie a karty
+│   ├── featured-vehicles.php       homepage featured resolver a blok
+│   ├── vehicle-inquiry-cf7.php     hlavní CF7 vehicle workflow
+│   ├── seasonal-pricing.php        cenová období a blackout metadata
+│   ├── admin-vehicle-duplicate.php admin duplikace vozidel
+│   ├── customizer.php              panel Amarilla a selective refresh
+│   ├── content-shortcodes.php      dynamické části headeru/footeru
+│   ├── locations.php               pobočky a OpenStreetMap
+│   ├── blog.php                    blog helpery a shortcodes
+│   ├── polylang-compat.php         jazykový přepínač a řetězce
+│   └── inquiry-form.php            legacy interní inquiry modul
 ├── assets/
-│   ├── css/                 — stylesheety
-│   ├── js/                  — JavaScript
-│   └── images/              — obrázky šablony
-└── languages/               — překlady (.po, .mo soubory)
+│   ├── css/                        frontend a editor styly
+│   ├── js/                         frontend/editor skripty
+│   ├── fonts/                      self-hostované WOFF2 fonty
+│   └── images/                     statické obrázky theme
+└── scripts/                        backup a SFTP deploy workflow
 ```
 
-## Často kladené otázky
+## Licence
 
-**Jak vyměním obrázky v sekci "Tipy z Tenerife"?**
-Editor patterns: **Vzhled → Editor → Patterns → Tipy z Tenerife** nebo upravte soubor `patterns/tenerife-tips.php` (vyměňte URL obrázků).
-
-**Jak změním obrázek v hero sekci?**
-Soubor `patterns/hero.php` – řádek s `<img src="...">`. Doporučujeme nahrát vlastní obrázek do mediální knihovny a použít jeho URL.
-
-**Vozový park se nezobrazuje na hlavní stránce.**
-Musíte přidat alespoň jedno vozidlo (Vozový park → Přidat nové). Pokud nejsou vozy, sekce zobrazí výzvu k jejich přidání.
-
-**Po aktivaci jsou rozbité odkazy na vozidla.**
-Jděte do **Nastavení → Trvalé odkazy** a klikněte na **Uložit změny**. Tím se obnoví URL pravidla.
-
-## Kontakt na vývojáře
-
-Pokud potřebujete úpravy nebo máte dotazy k implementaci, kontaktujte nás.
-
----
-
-**Verze:** 1.0.0
-**Licence:** GNU GPL v2 nebo novější
-
----
-
-## Novinky v 1.2.0
-
-### Self-hostované fonty (GDPR-friendly)
-Fonty Fraunces a DM Sans jsou nyní bundlované přímo v šabloně (`assets/fonts/`).
-Žádné spojení s `fonts.googleapis.com` ani `fonts.gstatic.com` — důležité pro
-EU autopůjčovny po rozhodnutí německého soudu (LG München I, 2022), které
-přenosy IP do USA přes Google Fonts CDN označilo za porušení GDPR.
-
-Soubory jsou variable fonts (`.woff2`, latin + latin-ext), `font-display: swap`
-a kritické tváře jsou preloadované přes `<link rel="preload">` v `<head>`.
-Celková velikost ~270 KB, načítá se jen co je potřeba (přes `unicode-range`).
-
-### Poptávkový / rezervační formulář
-Plně funkční tok ve výchozím stavu bez externího pluginu. Homepage widget lze
-volitelně nahradit Contact Form 7 shortcodem přes Customizer:
-
-1. **V hero** je teď compact widget (4 pole: datum vyzvednutí → vrácení → místo
-   → třída vozu). Lze vypnout v *Customizer → Hero → Zobrazit poptávkový widget*.
-   Pokud je nastaven CF7 shortcode, zobrazí se místo výchozího widgetu.
-2. **Na /kontakt/** je velký formulář (jméno, e-mail, telefon, věk řidiče,
-   poznámka, GDPR souhlas). Hero widget jeho hodnoty předvyplní.
-3. **U každého vozu** je tlačítko *Poptat tento vůz* — předvyplní jméno vozu
-   i jeho třídu.
-4. Po odeslání:
-   - se uloží do **CPT „Poptávky"** (v adminu, sloupec u Vozidla)
-   - **e-mail provozovateli** (na adresu z Customizeru → Kontakt) s odpověděním
-     na e-mail žadatele přes `Reply-To`
-   - **potvrzovací e-mail žadateli** se shrnutím
-5. Bezpečnost: WP nonce, honeypot (`amarilla_website`), rate limit 1/60 s/IP,
-   serverová validace dat (nikdy minulost, vrácení > vyzvednutí).
-
-Hook pro CRM integraci:
-```php
-add_action( 'amarilla_inquiry_received', function( $post_id, $data ) {
-    // poslat do HubSpotu / Slacku / vlastního API
-}, 10, 2 );
-```
-
-### Sezónní ceny u vozidel
-Na editaci vozidla je nový meta box **Sezónní ceny a dostupnost** s opakující
-se tabulkou (od–do, cena/den, štítek). Logika:
-- pokud datum vyzvednutí spadá do nějakého období → použije se jeho cena
-- jinak fallback na **základní cenu** (`_vehicle_price`) — zpětně kompatibilní
-- v kartě vozu se zobrazí **„od XX €"** automaticky, když existuje období
-  s nižší cenou než základní (vizuální signál pro návštěvníky)
-- nejnižší cena se propíše do `schema.org/Offer` pro rich snippets
-
-Volitelně i **blackout dny** (textarea, jedno datum nebo rozsah na řádek) —
-pro vlastní přehled. Formulář na ně neupozorňuje automaticky, jen se zobrazí
-v admin detailu poptávky pokud termín do blackoutu spadá.
-
-### Rozšířené schema.org
-JSON-LD se teď sestavuje jako `@graph` se třemi a víc nody dle stránky:
-
-- **Vždy:** `AutoRental` (jméno, telefon, e-mail, adresa, otevírací doba,
-  sociální sítě jako `sameAs`, všechny pobočky jako `location` s `geo`).
-- **Hlavní stránka / archiv:** `ItemList` všech vozů (sitelinks v Googlu).
-- **Detail vozu:** `Product` (kategorie, počet míst, palivo…) +
-  `Offer` (nejnižší cena ze sezónních období) +
-  `AggregateRating` (pokud jsou vyplněny `_vehicle_rating` a `_vehicle_rating_count`).
-- **Blog post:** `Article` (autor, datum, headline, obrázek).
-- **Skoro vždy:** `BreadcrumbList` pro lepší navigaci v SERP.
-
-Hodnocení vozidel zadáte v meta boxu *Specifikace vozidla* (nová pole **Hodnocení (1–5)**
-a **Počet hodnocení**). Pokud nemáte reálná hodnocení, **nechte prázdné** — Google
-fake hodnocení penalizuje.
-
-### Mapa míst vyzvednutí
-Nový panel v Customizeru: **Pobočky / místa vyzvednutí** (až 6 lokací).
-U každé: název, adresa, otevírací doba, GPS souřadnice (lat/lng).
-
-Mapa je **OpenStreetMap embed iframe** — žádné Google Maps, žádný Mapbox token,
-GDPR-friendly. Bounding box se dopočítává automaticky podle vyplněných souřadnic.
-U každé pobočky je odkaz "Otevřít v mapě" (mlat/mlon URL).
-
-Souřadnice najdete na [openstreetmap.org](https://www.openstreetmap.org/) —
-pravým tlačítkem → "Zobrazit adresu", nebo `View → Show address`.
-
-Sekce se objeví na hlavní stránce (mezi tipy a CTA). Lze vypnout
-v Customizeru. Pobočky se zároveň objeví jako možnosti v poptávkovém formuláři.
-
-### Blog pro SEO
-Plnohodnotný blog (post type `post`):
-- `templates/home.html` — archiv blogu (3-sloupcová mřížka s featured image)
-- `templates/single.html` — článek s 720px obsahem, kategorie, datum, čas čtení
-- `templates/archive.html` — kategorie, autoři, datumy
-- **Související články** pod každým článkem (3 nejnovější ze stejných kategorií)
-- Shortcode `[amarilla_reading_time]` — odhad doby čtení (200 slov/min)
-- Customizer panel **Blog — Tipy z Tenerife** pro nastavení hlavičky archivu
-
-Pro plnohodnotný blog vytvořte v **Nastavení → Čtení**:
-- Hlavní stránka → Statická stránka „Domů"
-- Stránka pro příspěvky → vytvořte stránku „Blog" a vyberte ji
-
-URL bude `/blog/`, jednotlivé články `/blog/nazev-clanku/`.
-
-Existující sekce *Tipy z Tenerife* (3 ručně zadané karty v Customizeru)
-zůstává pro hlavní stránku — funguje jako *highlights*, blog je pak hluboký
-obsah pro SEO.
-
----
-
-## Logo — jak ho nahrát
-
-V edit šabloně (Site Editor) blok `[amarilla_logo]` vypadá jako prázdný shortcode
-— **to je v pořádku**. Logo se nenahrává odsud.
-
-Nahrajte ho v: **Vzhled → Přizpůsobit → Identita webu → Vybrat logo**
-(`/wp-admin/customize.php`).
-
-Doplňková nastavení tamtéž:
-- **Šířka loga v hlavičce (px)** — 120–220 px
-- **Logo pro tmavé pozadí (patička)** — samostatný soubor (jinak se použije text)
-- **Zobrazit textovou variantu** — vypněte, pokud nechcete během načítání
-  vidět žlutý kruh s písmenem
-
-Doporučená velikost: 240 × 80 px (PNG nebo SVG, SVG je lepší — ostré
-na všech zařízeních a menší).
+GNU General Public License v2 nebo novější.
