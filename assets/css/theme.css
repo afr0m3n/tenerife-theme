@@ -1126,6 +1126,12 @@ img { max-width: 100%; height: auto; }
 	}
 }
 
+@media not all and (min-width: 600px) {
+	.amarilla-header-inner > :has(> .amarilla-btn--primary) {
+		display: none;
+	}
+}
+
 @media (max-width: 640px) {
 	:root {
 		--amarilla-container-pad: 20px;
